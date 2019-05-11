@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 
             // The user's ID, unique to the Firebase project.
             String uid = user.getUid();
-            Intent intent = new Intent(LoginActivity.this, DatabaseActivity.class);
+            Intent intent = new Intent(LoginActivity.this, homepage.class);
             startActivity(intent);
             finish();
         }
