@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".NewSettlement"></activity>
         <activity android:name=".AddGroupMember" />
         <activity android:name=".DatabaseActivity" />
         <activity android:name=".homepage" />
