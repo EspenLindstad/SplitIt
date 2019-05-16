@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,21 +18,27 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+    public FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private final static String TAG = "MAIN";
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         FirebaseApp.initializeApp(this);
 
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
@@ -45,9 +52,8 @@ public class LoginActivity extends AppCompatActivity {
 
             // The user's ID, unique to the Firebase project.
             String uid = user.getUid();
-            Intent intent = new Intent(LoginActivity.this, homepage.class);
-            startActivity(intent);
-            finish();
+            onAuthSuccess(mAuth.getCurrentUser());
+            showUserList();
         }
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -84,9 +90,8 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.makeText(LoginActivity.this, "Authentication Failed",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Intent intent = new Intent(LoginActivity.this, homepage.class);
-                                    startActivity(intent);
-                                    finish();
+                                    onAuthSuccess(task.getResult().getUser());
+                                    showUserList();
                                 }
                             }
                         });
@@ -113,9 +118,8 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.makeText(LoginActivity.this, "Authentication Failed",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Intent intent = new Intent(LoginActivity.this, homepage.class);
-                                    startActivity(intent);
-                                    finish();
+                                    onAuthSuccess(task.getResult().getUser());
+                                    showUserList();
                                 }
                             }
                         });
@@ -127,6 +131,11 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+
+        // Check auth on Activity start
+        if (mAuth.getCurrentUser() != null) {
+            onAuthSuccess(mAuth.getCurrentUser());
+        }
     }
 
     @Override
@@ -135,5 +144,35 @@ public class LoginActivity extends AppCompatActivity {
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    public void showUserList(){
+        startActivity(new Intent(getApplicationContext(), UserList.class));
+        finish();
+    }
+    private void onAuthSuccess(FirebaseUser user) {
+        String username = usernameFromEmail(user.getEmail());
+
+        // Write new user
+        writeNewUser(user.getUid(), username, user.getEmail());
+
+        // Go to MainActivity
+
+    }
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
+        } else {
+            return email;
+        }
+    }
+
+    private void writeNewUser(String userId, String name, String email) {
+        User user = new User(name, email);
+
+        mDatabase.child("users").child(userId).setValue(user);
+        ArrayList<String> userNames = new ArrayList<>();
+        userNames.add(name);
+        mDatabase.child("usernamelist").setValue(userNames);
     }
 }
