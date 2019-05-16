@@ -5,4 +5,5 @@
     <string name="title_profile">Profile</string>
     <string name="title_activity_homepage">homepage</string>
     <string name="title_activity_loginActivity">LoginActivity</string>
+    <string name="title_userlist">Userlist</string>
 </resources>

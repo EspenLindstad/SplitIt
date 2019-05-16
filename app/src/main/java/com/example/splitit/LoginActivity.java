@@ -147,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void showUserList(){
-        startActivity(new Intent(getApplicationContext(), UserList.class));
+        startActivity(new Intent(getApplicationContext(), homepage.class));
         finish();
     }
     private void onAuthSuccess(FirebaseUser user) {
@@ -174,5 +174,6 @@ public class LoginActivity extends AppCompatActivity {
         ArrayList<String> userNames = new ArrayList<>();
         userNames.add(name);
         mDatabase.child("usernamelist").setValue(userNames);
+
     }
 }
