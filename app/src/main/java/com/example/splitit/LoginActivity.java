@@ -2,11 +2,10 @@ package com.example.splitit;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -41,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         FirebaseUser user = mAuth.getCurrentUser();
+
         if (user != null) {
             // Name, email address, and profile photo Url
             String name = user.getDisplayName();
@@ -74,27 +74,9 @@ public class LoginActivity extends AppCompatActivity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = ((TextView) findViewById(R.id.edit_email)).getText().toString();
-                String password = ((TextView) findViewById(R.id.edit_password)).getText().toString();
 
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                if (!task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this, "Authentication Failed",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    onAuthSuccess(task.getResult().getUser());
-                                    showUserList();
-                                }
-                            }
-                        });
+                startActivity(new Intent(getApplicationContext(), signUp.class));
+                finish();
             }
         });
 
@@ -146,10 +128,15 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    public void signUpPage(){
+        startActivity(new Intent(getApplicationContext(), signUp.class));
+        finish();
+    }
     public void showUserList(){
         startActivity(new Intent(getApplicationContext(), homepage.class));
         finish();
     }
+
     private void onAuthSuccess(FirebaseUser user) {
         String username = usernameFromEmail(user.getEmail());
 
@@ -159,6 +146,8 @@ public class LoginActivity extends AppCompatActivity {
         // Go to MainActivity
 
     }
+
+
     private String usernameFromEmail(String email) {
         if (email.contains("@")) {
             return email.split("@")[0];
@@ -166,6 +155,7 @@ public class LoginActivity extends AppCompatActivity {
             return email;
         }
     }
+
 
     private void writeNewUser(String userId, String name, String email) {
         User user = new User(name, email);
@@ -176,4 +166,6 @@ public class LoginActivity extends AppCompatActivity {
         mDatabase.child("usernamelist").setValue(userNames);
 
     }
+
+
 }
