@@ -60,20 +60,21 @@ public class AddGroupMember extends AppCompatActivity {
         onStart();
 
         nextButton = (Button) findViewById(R.id.nextButton);
-        Button backButton = (Button) findViewById(R.id.backButton);
+        backButton = (Button) findViewById(R.id.backButton);
 
         nextButton.setEnabled(false);
 
         TextView topText = (TextView) findViewById(R.id.textView4);
 
-        final Set<Integer> memberList = new HashSet<Integer>();
 
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Creating an intent, from the MainActivity to AnotherActivity
-                Intent intent = new Intent(AddGroupMember.this, AddGroupMember.class);
+                Intent intent = new Intent(AddGroupMember.this, NameGroupPage.class);
+
+                intent.putStringArrayListExtra("grouplist", memberList);
 
                 // Invoking the intent, start AnotherActivity
                 startActivity(intent);
