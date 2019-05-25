@@ -3,6 +3,7 @@ package com.example.splitit;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -10,8 +11,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class NameGroupPage extends AppCompatActivity {
@@ -32,6 +35,9 @@ public class NameGroupPage extends AppCompatActivity {
 
     ArrayAdapter arrayAdapter;
 
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference groupsRef = database.getReference("groups");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,10 +46,10 @@ public class NameGroupPage extends AppCompatActivity {
         title = (TextView) findViewById(R.id.titleTextView);
         groupName = (TextView) findViewById(R.id.groupnameTextView);
         participants = (TextView) findViewById(R.id.participantsTextView);
-        String groupnameInput = ((TextView) findViewById(R.id.editText)).getText().toString();
 
-        backButton = (Button) findViewById(R.id.button);
-        doneButton = (Button) findViewById(R.id.button2);
+
+        backButton = (Button) findViewById(R.id.button2);
+        doneButton = (Button) findViewById(R.id.button);
 
         participantsView = (ListView) findViewById(R.id.usersList);
 
@@ -55,16 +61,28 @@ public class NameGroupPage extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, memberlist);
         participantsView.setAdapter(arrayAdapter);
 
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String groupnameInput = ((TextView) findViewById(R.id.editText)).getText().toString();
+                writeNewGroup(groupnameInput, memberlist);
 
+                startActivity(new Intent(getApplicationContext(), homepage.class));
+                finish();
+            }
+        });
 
     }
 
-    private void writeNewGroup(String userId, String gName, ArrayList members) {
+    private void writeNewGroup(String gName, ArrayList members) {
 
-        //mDatabase.child("group").child(userId).setValue(user);
-        ArrayList<String> userNames = new ArrayList<>();
-        //userNames.add(name);
-        mDatabase.child("usernamelist").setValue(userNames);
+        HashMap<String, Object> result = new HashMap<>();
+
+        Group group = new Group(gName, members);
+        String uniqueKey = groupsRef.push().getKey();
+        groupsRef.child(uniqueKey).setValue("Name: " + group.getGroupName());
+        groupsRef.child(uniqueKey).child("Members");
+        //groupsRef.child(uniqueKey).child("Members").setValue(group.getGroupList());
 
     }
 }

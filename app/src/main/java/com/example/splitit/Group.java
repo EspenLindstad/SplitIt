@@ -1,12 +1,14 @@
 package com.example.splitit;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Group {
 
-    ArrayList<String> groupList;
+    private ArrayList<String> groupList;
+    private String name;
 
     ArrayList<Expense> expenses = new ArrayList<Expense>();
 
@@ -16,8 +18,8 @@ public class Group {
 
     int members;
 
-    public Group(ArrayList groupList){
-
+    public Group(String name, ArrayList groupList){
+        this.name = name;
         this.groupList = groupList;
 
         this.members = groupList.size();
@@ -27,6 +29,14 @@ public class Group {
         for (int i = 0; i < groupList.size(); i++){
             userMap.put(groupList.get(i).toString(), i);
         }
+    }
+
+    public String getGroupName() {
+        return this.name;
+    }
+
+    public ArrayList<String> getGroupList() {
+        return this.groupList;
     }
 
 
@@ -87,7 +97,7 @@ public class Group {
         groupList.add("p2");
         groupList.add("p3");
 
-        Group group = new Group(groupList);
+        Group group = new Group("test", groupList);
 
         group.addGroupMember("p4");
 
