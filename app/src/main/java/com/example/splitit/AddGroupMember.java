@@ -55,7 +55,6 @@ public class AddGroupMember extends AppCompatActivity {
     private ArrayList<String> memberlist = new ArrayList<>();
     ArrayAdapter arrayAdapter;
 
-    ;
 
     public ListView userListView;
 

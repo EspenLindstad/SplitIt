@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -25,10 +27,17 @@ public class SettlementHomepage extends AppCompatActivity {
 
     private Group group;
 
+    ArrayAdapter arrayAdapter;
+
+
+    public ListView userListView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settlement_homepage);
+
+        userListView = (ListView) findViewById(R.id.groupmembersListView);
 
         Intent intent = getIntent();
 
@@ -43,13 +52,16 @@ public class SettlementHomepage extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 groupMembers = documentSnapshot.toObject(Group.class).getGroupList();
                 System.out.println("These are my mfuckin gmember: " + groupMembers);
+
+                arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
+                userListView.setAdapter(arrayAdapter);
             }
         });
 
 
 
-
     }
+
 
     public void readGroup(GroupCallback groupCallback) {
         final Task<QuerySnapshot> querySnapshotTask = db.collection("groups")

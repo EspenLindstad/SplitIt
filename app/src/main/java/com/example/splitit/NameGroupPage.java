@@ -45,6 +45,7 @@ public class NameGroupPage extends AppCompatActivity {
 
     private String uniqueKey;
     private String groupKey;
+    private String name;
 
     public ListView participantsView;
 
@@ -72,60 +73,45 @@ public class NameGroupPage extends AppCompatActivity {
         Intent intent = getIntent();
 
         memberlist = intent.getStringArrayListExtra("grouplist");
-        System.out.println("this is the memberlist: " + memberlist);
         userKeys = intent.getStringArrayListExtra("userKeys");
-        System.out.println("this is the userkeys: " + userKeys);
 
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, memberlist);
         participantsView.setAdapter(arrayAdapter);
 
-        readGroup(key -> {
-            doneButton.setOnClickListener(view -> {
-                String name = ((TextView) findViewById(R.id.editText)).getText().toString();
-                writeNewGroup(name, memberlist, userKeys);
-
-                Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
-
-                nextIntent.putExtra("groupKey", key);
-
-                startActivity(nextIntent);
-                finish();
-            });
-        });
+        name = ((TextView) findViewById(R.id.editText)).getText().toString();
 
 
+        doneButton.setOnClickListener(view -> {
+                    writeNewGroup(name, memberlist);
 
-    }
-
-
-    public void readGroup(GroupCallback groupCallback) {
-        final Task<QuerySnapshot> querySnapshotTask = db.collection("groups")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            groupKey = document.getId();
-                            System.out.println("Groupkey: " + groupKey);
-                        }
-                    } else {
-                        Log.w("WTF", "Error getting documents.", task.getException());
-                    }
-                    groupCallback.onCallback(groupKey);
                 });
-    }
+            }
 
 
-    private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> userKeys) {
 
-        uniqueKey = groupsRef.push().getKey();
-        Group group = new Group(uniqueKey, gName, members);
-        System.out.println("This is the groupKey: " + group.getKey());
+
+
+
+
+    private void writeNewGroup(String gName, ArrayList<String> members) {
+
+        Group group = new Group(gName, members);
         db.collection("groups")
                 .add(group)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         uniqueKey = documentReference.getId();
+                        System.out.println("Dette er nøkkelen i writenewgroup: " + uniqueKey);
+
+                        Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
+
+                        nextIntent.putExtra("groupKey", uniqueKey);
+
+                        System.out.println("intentkey: " + uniqueKey);
+
+                        startActivity(nextIntent);
+                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -134,6 +120,7 @@ public class NameGroupPage extends AppCompatActivity {
                         Log.w("Failure", "Error adding document", e);
                     }
                 });
+
 
     }
 
