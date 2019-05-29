@@ -9,6 +9,7 @@ public class Group {
 
     private ArrayList<String> groupList;
     private String name;
+    private String key;
 
     ArrayList<Expense> expenses = new ArrayList<Expense>();
 
@@ -18,9 +19,10 @@ public class Group {
 
     int members;
 
-    public Group(String name, ArrayList groupList){
+    public Group(String key, String name, ArrayList groupList){
         this.name = name;
         this.groupList = groupList;
+        this.key = key;
 
         this.members = groupList.size();
 
@@ -37,6 +39,10 @@ public class Group {
 
     public ArrayList<String> getGroupList() {
         return this.groupList;
+    }
+
+    public String getKey() {
+        return this.key;
     }
 
 
@@ -97,7 +103,7 @@ public class Group {
         groupList.add("p2");
         groupList.add("p3");
 
-        Group group = new Group("test", groupList);
+        Group group = new Group("1234fnei", "test", groupList);
 
         group.addGroupMember("p4");
 
