@@ -6,4 +6,5 @@
     <string name="title_activity_homepage">homepage</string>
     <string name="title_activity_loginActivity">LoginActivity</string>
     <string name="title_userlist">Userlist</string>
+    <string name="see_settlement">See settlement</string>
 </resources>

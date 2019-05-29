@@ -32,7 +32,7 @@ class User {
     }
 
     public void addUserToSettlement(Group group) {
-        partOf.add(group.getGroupName());
+        //partOf.add(group.getGroupName());
     }
 
     public ArrayList<String> getUsersSettlements() {

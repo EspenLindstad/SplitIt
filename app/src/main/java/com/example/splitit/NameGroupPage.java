@@ -14,12 +14,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +42,9 @@ public class NameGroupPage extends AppCompatActivity {
 
     private Button backButton;
     private Button doneButton;
+
+    private String uniqueKey;
+    private String groupKey;
 
     public ListView participantsView;
 
@@ -66,32 +72,60 @@ public class NameGroupPage extends AppCompatActivity {
         Intent intent = getIntent();
 
         memberlist = intent.getStringArrayListExtra("grouplist");
+        System.out.println("this is the memberlist: " + memberlist);
         userKeys = intent.getStringArrayListExtra("userKeys");
+        System.out.println("this is the userkeys: " + userKeys);
 
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, memberlist);
         participantsView.setAdapter(arrayAdapter);
 
-        doneButton.setOnClickListener(view -> {
-            String name = ((TextView) findViewById(R.id.editText)).getText().toString();
-            writeNewGroup(name, memberlist, userKeys);
+        readGroup(key -> {
+            doneButton.setOnClickListener(view -> {
+                String name = ((TextView) findViewById(R.id.editText)).getText().toString();
+                writeNewGroup(name, memberlist, userKeys);
 
-            startActivity(new Intent(getApplicationContext(), homepage.class));
-            finish();
+                Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
+
+                nextIntent.putExtra("groupKey", key);
+
+                startActivity(nextIntent);
+                finish();
+            });
         });
 
+
+
+    }
+
+
+    public void readGroup(GroupCallback groupCallback) {
+        final Task<QuerySnapshot> querySnapshotTask = db.collection("groups")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            groupKey = document.getId();
+                            System.out.println("Groupkey: " + groupKey);
+                        }
+                    } else {
+                        Log.w("WTF", "Error getting documents.", task.getException());
+                    }
+                    groupCallback.onCallback(groupKey);
+                });
     }
 
 
     private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> userKeys) {
 
-        String uniqueKey = groupsRef.push().getKey();
-        Group group = new Group(uniqueKey, gName, userKeys);
+        uniqueKey = groupsRef.push().getKey();
+        Group group = new Group(uniqueKey, gName, members);
+        System.out.println("This is the groupKey: " + group.getKey());
         db.collection("groups")
                 .add(group)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Log.d("Grouplist", "DocumentSnapshot added with ID: " + documentReference.getId());
+                        uniqueKey = documentReference.getId();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

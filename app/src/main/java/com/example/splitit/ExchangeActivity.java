@@ -47,7 +47,7 @@ public class ExchangeActivity extends AppCompatActivity {
                 groupList.add("p3");
                 groupList.add("p4");
                 groupList.add("p5");
-                Group group = new Group(groupList ,"USD");
+                Group group = new Group("ejnojw", "test", groupList);
 
 
                 HttpURLConnection urlConnection = null;

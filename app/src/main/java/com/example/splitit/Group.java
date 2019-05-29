@@ -40,6 +40,17 @@ public class Group {
         }
     }
 
+    public Group() {
+
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public ArrayList<String> getGroupList() {
+        return groupList;
+    }
 
     public void addGroupMember(String user) {
 
