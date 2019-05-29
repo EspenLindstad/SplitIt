@@ -12,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
@@ -19,12 +21,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
-    private DatabaseReference mDatabase;
-    public FirebaseAuth mAuth;
+    private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+    public FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseAuth.AuthStateListener mAuthListener;
     private final static String TAG = "MAIN";
 
@@ -36,10 +42,8 @@ public class LoginActivity extends AppCompatActivity {
 
         FirebaseApp.initializeApp(this);
 
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
         FirebaseUser user = mAuth.getCurrentUser();
+
 
         if (user != null) {
             // Name, email address, and profile photo Url
@@ -140,11 +144,6 @@ public class LoginActivity extends AppCompatActivity {
     private void onAuthSuccess(FirebaseUser user) {
         String username = usernameFromEmail(user.getEmail());
 
-        // Write new user
-        writeNewUser(user.getUid(), username, user.getEmail());
-
-        // Go to MainActivity
-
     }
 
 
@@ -157,15 +156,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(name, email);
-
-        mDatabase.child("users").child(userId).setValue(user);
-        ArrayList<String> userNames = new ArrayList<>();
-        userNames.add(name);
-        mDatabase.child("usernamelist").setValue(userNames);
-
-    }
 
 
 }
