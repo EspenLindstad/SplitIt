@@ -14,6 +14,8 @@ import java.util.Map;
 public class Group {
 
     String baseCurrency;
+    private String name;
+    private String key;
 
     ArrayList<String> groupList;
 
@@ -25,12 +27,10 @@ public class Group {
 
     int members;
 
-    public Group(ArrayList groupList, String baseCurrency) {
-
-        this.baseCurrency = baseCurrency;
-
+    public Group(String key, String name, ArrayList groupList) {
+        this.key = key;
+        this.name = name;
         this.groupList = groupList;
-
         this.members = groupList.size();
 
         settlement = new int[groupList.size()][groupList.size()];
@@ -206,7 +206,7 @@ public class Group {
         groupList.add("p4");
         groupList.add("p5");
 
-        Group group = new Group(groupList ,"hei");
+        Group group = new Group("dmcwdcw", "test", groupList);
 
         ArrayList<String> expenseMembers1 = new ArrayList<>();
         expenseMembers1.add("p1");
