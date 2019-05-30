@@ -133,17 +133,6 @@ public class AddGroupMember extends AppCompatActivity {
             }
         });
 
-        /*
-
-        testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                memberList.add(1);
-                changeClickability(memberList, nextButton);
-            }
-        });
-        */
-
 
     }
 
@@ -181,6 +170,9 @@ public class AddGroupMember extends AppCompatActivity {
                             String name = document.get("name").toString();
                             String temp = user.getUid();
                             String uid = document.get("userID").toString();
+
+                            System.out.println("comparrison: " + temp + " " + uid);
+
                             System.out.println(displayName);
                             if (!temp.equals(uid)) {
                                 usernamelist.add(name);

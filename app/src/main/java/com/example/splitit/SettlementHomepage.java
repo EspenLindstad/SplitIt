@@ -109,8 +109,6 @@ public class SettlementHomepage extends AppCompatActivity {
                 settlementMap.put("usersSettlements", partOf);
                 db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
 
-                System.out.println("Ting funker ja");
-
             }
         });
     }

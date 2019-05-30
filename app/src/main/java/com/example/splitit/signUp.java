@@ -127,6 +127,8 @@ public class signUp extends AppCompatActivity {
     }
 
     public void showUserList(){
+        //Her skal jeg sende med brukernøkkelen
+
         startActivity(new Intent(getApplicationContext(), homepage.class));
         finish();
     }
