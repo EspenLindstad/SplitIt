@@ -45,6 +45,12 @@ public class Group {
         // IKKK SLETT DENNE
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {this.name = name;}
+
     public String getBaseCurrency(){
         return baseCurrency;
     }

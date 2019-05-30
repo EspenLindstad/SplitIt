@@ -20,13 +20,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NameGroupPage extends AppCompatActivity {
 
@@ -47,6 +50,7 @@ public class NameGroupPage extends AppCompatActivity {
     private String uniqueKey;
     private String groupKey;
     private String name;
+    private String userkey;
 
     public ListView participantsView;
 
@@ -79,7 +83,6 @@ public class NameGroupPage extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, memberlist);
         participantsView.setAdapter(arrayAdapter);
 
-        name = ((TextView) findViewById(R.id.editText)).getText().toString();
 
 
         doneButton.setOnClickListener(view -> {
@@ -89,13 +92,9 @@ public class NameGroupPage extends AppCompatActivity {
             }
 
 
-
-
-
-
-
     private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys) {
-
+        gName = ((TextView) findViewById(R.id.editText)).getText().toString();
+        System.out.println("This is the groupname: " + gName);
         Group group = new Group(gName, members, memberKeys);
         db.collection("groups")
                 .add(group)
@@ -104,6 +103,10 @@ public class NameGroupPage extends AppCompatActivity {
                     public void onSuccess(DocumentReference documentReference) {
                         uniqueKey = documentReference.getId();
                         System.out.println("Dette er nøkkelen i writenewgroup: " + uniqueKey);
+
+                        for (String member : memberKeys) {
+                            addUserToSettlement(uniqueKey, member);
+                        }
 
                         Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
 
@@ -124,5 +127,34 @@ public class NameGroupPage extends AppCompatActivity {
 
 
     }
+
+    public void addUserToSettlement(String groupKey, String userKey) {
+
+        DocumentReference docRef = db.collection("users").document(userKey);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                System.out.println("Class of usersting: " + documentSnapshot.get("usersSettlements"));
+
+                if (documentSnapshot.get("usersSettlements") == null) {
+                    Map<String, ArrayList<String>> settlementMap = new HashMap<>();
+                    ArrayList<String> partOf = new ArrayList<>();
+                    settlementMap.put("usersSettlements", partOf);
+                    db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
+                }
+
+                Map<String, ArrayList<String>> settlementMap = new HashMap<>();
+                ArrayList<String> memberOf = new ArrayList<>();
+                memberOf.add(groupKey);
+                settlementMap.put("usersSettlements", memberOf);
+                db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
+
+                System.out.println("Ting funker ja");
+
+            }
+        });
+
+    }
+
 
 }
