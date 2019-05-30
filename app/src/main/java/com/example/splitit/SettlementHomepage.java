@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,6 +29,8 @@ public class SettlementHomepage extends AppCompatActivity {
 
     private Group group;
 
+    private Button addBtn;
+
     ArrayAdapter arrayAdapter;
 
 
@@ -43,6 +47,8 @@ public class SettlementHomepage extends AppCompatActivity {
 
         groupKey = intent.getExtras().getString("groupKey");
 
+        addBtn = (Button) findViewById(R.id.addBtn);
+
 
         System.out.println("this is the groupKey: " + groupKey);
 
@@ -58,6 +64,15 @@ public class SettlementHomepage extends AppCompatActivity {
             }
         });
 
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent newIntent = new Intent(getApplicationContext(), ExchangeActivity.class);
+                newIntent.putExtra("groupKey", groupKey);
+                startActivity(newIntent);
+            }
+        });
 
     }
 

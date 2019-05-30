@@ -45,6 +45,13 @@ public class Group {
         // IKKK SLETT DENNE
     }
 
+    public String getBaseCurrency(){
+        return baseCurrency;
+    }
+
+    public void setBaseCurrency(String baseCurrency){
+        this.baseCurrency = baseCurrency;
+    }
 
     public ArrayList<String> getGroupList() {
         return groupList;
