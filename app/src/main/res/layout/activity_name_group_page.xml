@@ -68,13 +68,11 @@
 
     <ListView
         android:id="@+id/usersList"
-        android:layout_width="wrap_content"
-        android:layout_height="333dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -82,33 +80,34 @@
         app:layout_constraintTop_toBottomOf="@+id/editText"
         app:layout_constraintVertical_bias="0.3" />
 
-    <TextView
-        android:id="@+id/participantsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:text="Participants"
-        app:layout_constraintBottom_toTopOf="@+id/usersList"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText"
-        app:layout_constraintVertical_bias="1.0" />
-
     <EditText
         android:id="@+id/editText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="124dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/participantsTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/groupnameTextView"
         app:layout_constraintTop_toBottomOf="@+id/groupnameTextView" />
+
+    <TextView
+        android:id="@+id/participantsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="344dp"
+        android:layout_marginBottom="13dp"
+        android:text="Participants"
+        app:layout_constraintBottom_toTopOf="@+id/usersList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText"
+        app:layout_constraintVertical_bias="0.0" />
 </android.support.constraint.ConstraintLayout>

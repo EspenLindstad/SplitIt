@@ -39,6 +39,7 @@ public class NameGroupPage extends AppCompatActivity {
 
     private ArrayList<String> memberlist;
     private ArrayList<String> userKeys;
+    private ArrayList<String> memberKeys;
 
     private Button backButton;
     private Button doneButton;
@@ -82,7 +83,7 @@ public class NameGroupPage extends AppCompatActivity {
 
 
         doneButton.setOnClickListener(view -> {
-                    writeNewGroup(name, memberlist);
+                    writeNewGroup(name, memberlist, userKeys);
 
                 });
             }
@@ -93,9 +94,9 @@ public class NameGroupPage extends AppCompatActivity {
 
 
 
-    private void writeNewGroup(String gName, ArrayList<String> members) {
+    private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys) {
 
-        Group group = new Group(gName, members);
+        Group group = new Group(gName, members, memberKeys);
         db.collection("groups")
                 .add(group)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
