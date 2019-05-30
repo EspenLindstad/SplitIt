@@ -22,8 +22,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class signUp extends AppCompatActivity {
 
@@ -32,6 +35,8 @@ public class signUp extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private final static String TAG = "MAIN";
     private FirebaseFirestore db;
+
+    private String key;
 
 
     @Override
@@ -131,7 +136,7 @@ public class signUp extends AppCompatActivity {
         String username = usernameFromEmail(user.getEmail());
 
         // Write new user
-        writeNewUser(user.getUid(), username, user.getEmail());
+        writeNewUser(username, user.getEmail());
 
         // Go to MainActivity
     }
@@ -145,8 +150,8 @@ public class signUp extends AppCompatActivity {
         }
     }
 
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(userId, name, email);
+    private void writeNewUser(String name, String email) {
+        User user = new User(name, email);
 
 
         // Add a new document with a generated ID
@@ -156,6 +161,16 @@ public class signUp extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                        key = documentReference.getId();
+
+                        user.setUserID(key);
+
+                        Map<String, Object> userMap = new HashMap<>();
+
+                        userMap.put("userID", key);
+
+
+                        db.collection("users").document(key).set(userMap, SetOptions.merge());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -164,6 +179,11 @@ public class signUp extends AppCompatActivity {
                         Log.w(TAG, "Error adding document", e);
                     }
                 });
+
+
+
+
+
 
 
     }

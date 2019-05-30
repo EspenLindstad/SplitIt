@@ -9,23 +9,35 @@ import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SettlementHomepage extends AppCompatActivity {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    public FirebaseAuth Auth = FirebaseAuth.getInstance();
+    public FirebaseUser user;
 
     private String groupKey;
+    private String memberkey;
 
     private ArrayList<String> groupMembers;
+    private ArrayList<String> memberKeys;
+    private ArrayList<String> partOf;
 
     private Group group;
+
 
     ArrayAdapter arrayAdapter;
 
@@ -43,18 +55,32 @@ public class SettlementHomepage extends AppCompatActivity {
 
         groupKey = intent.getExtras().getString("groupKey");
 
+        user = Auth.getCurrentUser();
+
+
 
         System.out.println("this is the groupKey: " + groupKey);
+
 
         DocumentReference docRef = db.collection("groups").document(groupKey);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 groupMembers = documentSnapshot.toObject(Group.class).getGroupList();
-                System.out.println("These are my mfuckin gmember: " + groupMembers);
+                memberKeys = documentSnapshot.toObject(Group.class).getGroupKeys();
 
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
                 userListView.setAdapter(arrayAdapter);
+
+                for (String member : memberKeys) {
+                    readData(new GroupCallback() {
+                        @Override
+                        public void onCallback(String key) {
+                            addUserToSettlement(groupKey, member);
+                        }
+                    });
+
+                }
             }
         });
 
@@ -63,20 +89,33 @@ public class SettlementHomepage extends AppCompatActivity {
     }
 
 
-    public void readGroup(GroupCallback groupCallback) {
-        final Task<QuerySnapshot> querySnapshotTask = db.collection("groups")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            groupKey = document.getId();
-                        }
-                    } else {
-                        Log.w("WTF", "Error getting documents.", task.getException());
-                    }
-                    groupCallback.onCallback(groupKey);
-                });
+    public void readData(GroupCallback groupCallback) {
+
+        groupCallback.onCallback(groupKey);
     }
+
+
+    private void addUserToSettlement(String groupKey, String userKey) {
+        DocumentReference docRef = db.collection("users").document(userKey);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                partOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
+                System.out.println("Part of: " + partOf);
+
+                partOf.add(groupKey);
+
+                Map<String, Object> settlementMap = new HashMap<>();
+                settlementMap.put("usersSettlements", partOf);
+                db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
+
+                System.out.println("Ting funker ja");
+
+            }
+        });
+    }
+
+
 
 
 }

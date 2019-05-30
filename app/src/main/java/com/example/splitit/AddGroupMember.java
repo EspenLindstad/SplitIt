@@ -19,6 +19,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,9 +50,12 @@ public class AddGroupMember extends AppCompatActivity {
 
 
     private static final String TAG = "UserList";
+    private String displayName;
+
     private DatabaseReference userlistReference;
     private ValueEventListener mUserListListener;
     private ArrayList<String> usernamelist = new ArrayList<>();
+    private ArrayList<String> userkeylist = new ArrayList<>();
     private ArrayList<String> userKeys = new ArrayList<>();
     private ArrayList<String> memberlist = new ArrayList<>();
     ArrayAdapter arrayAdapter;
@@ -60,15 +65,18 @@ public class AddGroupMember extends AppCompatActivity {
 
     public TextView titleTextView;
 
-
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference userRef = db.collection("users");
+    private FirebaseUser user;
+    public FirebaseAuth Auth = FirebaseAuth.getInstance();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group_member);
+
+        user = Auth.getCurrentUser();
 
 
         userlistReference = FirebaseDatabase.getInstance().getReference().child("users");
@@ -97,9 +105,11 @@ public class AddGroupMember extends AppCompatActivity {
         userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 if (!memberlist.contains(usernamelist.get(position))) {
                     memberlist.add(usernamelist.get(position));
+                    userKeys.add(userkeylist.get(position));
+
+
 
                 }
                 changeClickability();
@@ -113,6 +123,7 @@ public class AddGroupMember extends AppCompatActivity {
             public void onClick(View v) {
                 // Creating an intent, from the MainActivity to AnotherActivity
                 Intent intent = new Intent(AddGroupMember.this, NameGroupPage.class);
+
 
                 intent.putStringArrayListExtra("grouplist", memberlist);
                 intent.putStringArrayListExtra("userKeys", userKeys);
@@ -144,15 +155,39 @@ public class AddGroupMember extends AppCompatActivity {
 
     }
 
+
+
     public void readData(MyCallback myCallback) {
         final Task<QuerySnapshot> querySnapshotTask = db.collection("users")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            String temp = document.get("name").toString();
-                            usernamelist.add(temp);
-                            userKeys.add(document.getId());
+
+                            if (user != null) {
+                                // User is Login
+                                displayName = user.getDisplayName();
+
+                                // If the above were null, iterate the provider data
+                                // and set with the first non null data
+                                for (UserInfo userInfo : user.getProviderData()) {
+                                    if (displayName == null && userInfo.getDisplayName() != null) {
+                                        displayName = userInfo.getDisplayName();
+                                    }
+                                }
+
+                            }
+
+                            String name = document.get("name").toString();
+                            String temp = user.getUid();
+                            String uid = document.get("userID").toString();
+                            System.out.println(displayName);
+                            if (!temp.equals(uid)) {
+                                usernamelist.add(name);
+                                userkeylist.add(document.getId());
+
+                            }
+
                         }
                     } else {
                         Log.w(TAG, "Error getting documents.", task.getException());
@@ -160,30 +195,4 @@ public class AddGroupMember extends AppCompatActivity {
                     myCallback.onCallback(usernamelist, userKeys);
                 });
     }
-    /*
-    private void loadUsers(MyCallback myCallback) {
-        final Task<QuerySnapshot> querySnapshotTask = userRef.get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onDataChange(QuerySnapshot documentSnapshots) {
-                        if (documentSnapshots.isEmpty()) {
-                            Log.d(TAG, "onSuccess: LIST EMPTY");
-                            return;
-                        } else {
-                            // Convert the whole Query Snapshot to a list
-                            // of objects directly! No need to fetch each
-                            // document.
-                            List<User> types = documentSnapshots.toObjects(User.class);
-
-                            // Add all to your list
-                            userlist.addAll(types);
-                            Log.d(TAG, "onSuccess: " + userlist);
-                            MyCallback.onCallback(userlist);
-
-                        }
-                    }
-
-                });
-    }
-    */
 }

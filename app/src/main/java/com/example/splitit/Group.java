@@ -17,7 +17,8 @@ public class Group {
     private String name;
     private String key;
 
-    ArrayList<String> groupList;
+    private ArrayList<String> groupList;
+    private ArrayList<String> groupKeys;
 
     ArrayList<Expense> expenses = new ArrayList<Expense>();
 
@@ -27,9 +28,10 @@ public class Group {
 
     int members;
 
-    public Group(String name, ArrayList groupList) {
+    public Group(String name, ArrayList groupList, ArrayList groupKeys) {
         this.name = name;
         this.groupList = groupList;
+        this.groupKeys = groupKeys;
         this.members = groupList.size();
 
         settlement = new int[groupList.size()][groupList.size()];
@@ -46,6 +48,10 @@ public class Group {
 
     public ArrayList<String> getGroupList() {
         return groupList;
+    }
+
+    public ArrayList<String> getGroupKeys() {
+        return groupKeys;
     }
 
     public void addGroupMember(String user) {
@@ -213,7 +219,12 @@ public class Group {
         groupList.add("p4");
         groupList.add("p5");
 
-        Group group = new Group("test", groupList);
+        ArrayList<String> groupKeys = new ArrayList<>();
+        groupKeys.add("p1");
+        groupKeys.add("p2");
+        groupKeys.add("p5");
+
+        Group group = new Group("test", groupList, groupKeys);
 
         ArrayList<String> expenseMembers1 = new ArrayList<>();
         expenseMembers1.add("p1");
