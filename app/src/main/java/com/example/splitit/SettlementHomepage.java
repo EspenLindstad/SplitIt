@@ -77,5 +77,4 @@ public class SettlementHomepage extends AppCompatActivity {
                 });
     }
 
-
 }

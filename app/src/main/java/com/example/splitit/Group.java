@@ -23,7 +23,7 @@ public class Group {
 
     private Map<String, Integer> userMap = new HashMap<String, Integer>(); //<username, index in matrix>
 
-    private int[][] settlement;
+    private double[][] settlement;
 
     int members;
 
@@ -32,7 +32,7 @@ public class Group {
         this.groupList = groupList;
         this.members = groupList.size();
 
-        settlement = new int[groupList.size()][groupList.size()];
+        settlement = new double[groupList.size()][groupList.size()];
 
         for (int i = 0; i < groupList.size(); i++) {
             userMap.put(groupList.get(i).toString(), i);
@@ -56,7 +56,7 @@ public class Group {
         userMap.put(user, members);
         members++;
 
-        int[][] temp = new int[groupList.size() + 1][groupList.size() + 1];
+        double[][] temp = new double[groupList.size() + 1][groupList.size() + 1];
 
         for (int i = 0; i < settlement.length; i++) {
             for (int j = 0; j < settlement.length; j++) {
@@ -108,7 +108,7 @@ public class Group {
         }
         userMap.remove(user);
 
-        int [][] temp = new int[settlement.length-1][settlement.length-1];
+        double [][] temp = new double[settlement.length-1][settlement.length-1];
 
         for (Expense expense : expenses){
             ArrayList<String> expenseMembers = expense.getExpenseMembers(); //"p1", "p2"
@@ -244,7 +244,7 @@ public class Group {
 
         System.out.println(group.userMap);
 
-        for (int[] row : group.settlement) {
+        for (double[] row : group.settlement) {
 
             // converting each row as string
             // and then printing in a separate line
@@ -257,7 +257,7 @@ public class Group {
 
         System.out.println(group.userMap);
 
-        for (int[] row : group.settlement) {
+        for (double[] row : group.settlement) {
 
             // converting each row as string
             // and then printing in a separate line
@@ -268,7 +268,8 @@ public class Group {
 
         SplitAlgorithm split = new SplitAlgorithm();
 
-        split.minCashFlow(group.settlement, group.groupList.size());
+
+        //split.minCashFlow(group.settlement, group.groupList.size());
 
 
         // Group group_test = new Group(groupList);
