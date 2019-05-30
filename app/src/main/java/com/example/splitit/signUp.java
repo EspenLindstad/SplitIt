@@ -37,6 +37,7 @@ public class signUp extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private String key;
+    private String uid;
 
 
     @Override
@@ -51,7 +52,6 @@ public class signUp extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        FirebaseUser user = mAuth.getCurrentUser();
 
 
         Button newUserBtn = (Button) findViewById(R.id.newUserBtn);
@@ -129,13 +129,13 @@ public class signUp extends AppCompatActivity {
     public void showUserList(){
         //Her skal jeg sende med brukernøkkelen
 
-        startActivity(new Intent(getApplicationContext(), homepage.class));
-        finish();
     }
 
     private void onAuthSuccess(FirebaseUser user) {
 
         String username = usernameFromEmail(user.getEmail());
+
+        uid = user.getUid();
 
         // Write new user
         writeNewUser(username, user.getEmail());
@@ -166,13 +166,23 @@ public class signUp extends AppCompatActivity {
                         key = documentReference.getId();
 
                         user.setUserID(key);
+                        user.setUserUid(mAuth.getUid());
+
+                        uid = mAuth.getUid();
 
                         Map<String, Object> userMap = new HashMap<>();
 
                         userMap.put("userID", key);
+                        userMap.put("Uid", uid);
 
 
                         db.collection("users").document(key).set(userMap, SetOptions.merge());
+
+                        Intent intent = new Intent(getApplicationContext(), homepage.class);
+                        intent.putExtra("userKey", key);
+
+                        startActivity(intent);
+                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

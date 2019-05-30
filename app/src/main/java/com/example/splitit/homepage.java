@@ -13,14 +13,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class homepage extends AppCompatActivity {
@@ -41,7 +46,11 @@ public class homepage extends AppCompatActivity {
     private ArrayList<String> partOf;
     ArrayAdapter arrayAdapter;
 
+    private String uid;
+    private String userkey;
+
     public ListView GroupListView;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -66,6 +75,22 @@ public class homepage extends AppCompatActivity {
             return false;
         }
     };
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        readData(new PartOfInterface() {
+            @Override
+            public void onCallback(ArrayList<String> groups) {
+                if (partOf != null) {
+                    arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, partOf);
+                    GroupListView.setAdapter(arrayAdapter);
+                }
+            }
+
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,29 +133,44 @@ public class homepage extends AppCompatActivity {
         readData(new PartOfInterface() {
             @Override
             public void onCallback(ArrayList<String> groups) {
-                arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, partOf);
-                System.out.println(partOf.size());
-                System.out.println(arrayAdapter.getClass());
-                GroupListView.setAdapter(arrayAdapter);
+                if (partOf != null) {
+                    arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, partOf);
+                    GroupListView.setAdapter(arrayAdapter);
+                }
             }
 
         });
     }
 
     public void readData(PartOfInterface partOfInterface) {
-        String userkey = user.getUid();
-        System.out.println("Pals getUid: " + userkey);
-        DocumentReference docRef = db.collection("users").document("0MKwjTYLqCKvgxu3hKUW");
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        // Create a reference to the cities collection
+        CollectionReference userRef = db.collection("users");
+        // Create a query against the collection.
+        Query query = userRef.whereEqualTo("Uid", user.getUid());
+        // retrieve  query results asynchronously using query.get()
+        Task<QuerySnapshot> querySnapshotTask = query.get();
+
+        querySnapshotTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                partOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
-                System.out.println("Part of: " + partOf);
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot document : querySnapshotTask.getResult().getDocuments()) {
+                    userkey = document.getId();
 
-                partOfInterface.onCallback(partOf);
+                    DocumentReference docRef = db.collection("users").document(userkey); //Denne må fikses
+                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            partOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
+                            System.out.println("Part of: " + partOf);
 
+                            partOfInterface.onCallback(partOf);
+
+                        }
+                    });
+                }
             }
         });
+
     }
 
 

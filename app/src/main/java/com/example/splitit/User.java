@@ -17,6 +17,7 @@ class User {
     private String name;
     private String email;
     private String ID;
+    private String Uid;
 
     private ArrayList<String> partOf;
 
@@ -38,6 +39,8 @@ class User {
     public void setUserID(String ID) {
         this.ID = ID;
     }
+
+    public void setUserUid(String Uid) {this.Uid = Uid;}
 
     public String getName() {
         return this.name;

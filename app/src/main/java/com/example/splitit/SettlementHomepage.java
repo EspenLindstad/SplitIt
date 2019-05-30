@@ -103,11 +103,19 @@ public class SettlementHomepage extends AppCompatActivity {
                 partOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
                 System.out.println("Part of: " + partOf);
 
+                if (partOf == null) {
+                    Map<String, Object> settlementMap = new HashMap<>();
+                    ArrayList<String> newList = new ArrayList<>();
+                    settlementMap.put("usersSettlements", newList);
+                    db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
+                }
+                partOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
                 partOf.add(groupKey);
 
                 Map<String, Object> settlementMap = new HashMap<>();
                 settlementMap.put("usersSettlements", partOf);
                 db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
+
 
             }
         });
