@@ -7,6 +7,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -86,6 +87,18 @@ public class homepage extends AppCompatActivity {
                 if (partOf != null) {
                     arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, partOf);
                     GroupListView.setAdapter(arrayAdapter);
+
+                    GroupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                            Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
+
+                            nextIntent.putExtra("groupKey", partOf.get(position));
+
+                            startActivity(nextIntent);
+                        }
+                    });
                 }
             }
 

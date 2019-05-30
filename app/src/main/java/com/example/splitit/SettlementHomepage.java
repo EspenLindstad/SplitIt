@@ -30,6 +30,7 @@ public class SettlementHomepage extends AppCompatActivity {
     private Group group;
 
     private Button addBtn;
+    private Button goToSettlementBtn;
 
     ArrayAdapter arrayAdapter;
 
@@ -48,6 +49,19 @@ public class SettlementHomepage extends AppCompatActivity {
         groupKey = intent.getExtras().getString("groupKey");
 
         addBtn = (Button) findViewById(R.id.addBtn);
+
+        goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
+
+        goToSettlementBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settlementIntent = new Intent(getApplicationContext(), SeeSettlement.class);
+
+                settlementIntent.putExtra("groupKey", groupKey);
+
+                startActivity(settlementIntent);
+            }
+        });
 
 
         System.out.println("this is the groupKey: " + groupKey);

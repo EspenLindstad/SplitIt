@@ -284,7 +284,7 @@ public class Group {
 
         System.out.println(group.whoShouldPayNext());
 
-        SplitAlgorithm split = new SplitAlgorithm();
+        SplitAlgorithm split = new SplitAlgorithm(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>());
 
 
         //split.minCashFlow(group.settlement, group.groupList.size());

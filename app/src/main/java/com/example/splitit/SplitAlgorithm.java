@@ -1,13 +1,46 @@
 package com.example.splitit;
 
 
-class SplitAlgorithm
-{
+import android.content.Intent;
+
+import java.util.ArrayList;
+
+public class SplitAlgorithm {
     // Number of persons (or vertices in the graph)
 
+    private ArrayList<String> debitors;
+    private ArrayList<String> creditors;
+    private ArrayList<String> sums;
 
-    SplitAlgorithm(){
 
+    public SplitAlgorithm(ArrayList<String> debitors, ArrayList<String> creditos, ArrayList<String> sums){
+        this.debitors = debitors;
+        this.creditors = creditors;
+        this.sums = sums;
+    }
+
+    public void addToDebitors(String debit) {
+        debitors.add(debit);
+    }
+
+    public void addToCreditors(String credit) {
+        debitors.add(credit);
+    }
+
+    public void addToSums(String sum) {
+        debitors.add(sum);
+    }
+
+    public ArrayList<String> getDebitors() {
+        return this.debitors;
+    }
+
+    public ArrayList<String> getCreditors() {
+        return this.creditors;
+    }
+
+    public ArrayList<String> getSums() {
+        return this.sums;
     }
 
     // A utility function that returns
@@ -44,7 +77,7 @@ class SplitAlgorithm
     // i'th person will amount[i]
     // If amount[p] is negative, then
     // i'th person will give -amount[i]
-    static void minCashFlowRec(int amount[], int N)
+    private void minCashFlowRec(int amount[], int N)
     {
         // Find the indexes of minimum and
         // maximum values in amount[]
@@ -66,6 +99,11 @@ class SplitAlgorithm
         amount[mxCredit] -= min;
         amount[mxDebit] += min;
 
+
+        addToCreditors(Integer.toString(mxDebit));
+        addToDebitors(Integer.toString(mxCredit));
+        addToSums(Integer.toString(min));
+
         // If minimum is the maximum amount to be
         System.out.println("Person " + mxDebit + " pays " + min
                 + " to " + "Person " + mxCredit);
@@ -84,7 +122,7 @@ class SplitAlgorithm
     // pay person j, this function
     // finds and prints the minimum
     // cash flow to settle all debts.
-    static void minCashFlow(int graph[][], int N)
+    private void minCashFlow(int graph[][], int N)
     {
         // Create an array amount[],
         // initialize all value in it as 0.
@@ -105,13 +143,13 @@ class SplitAlgorithm
 
 
     // Driver code
-    public static void main (String[] args)
+    public void main (String[] args)
     {
         // graph[i][j] indicates the amount
         // that person i needs to pay person j
         int graph[][] = { {0, 1000, 2000},
-                {0, 0, 5000},
-                {0, 0, 0},};
+                        {0, 0, 5000},
+                        {0, 0, 0},};
 
         int N = 3;
         // Print the solution
