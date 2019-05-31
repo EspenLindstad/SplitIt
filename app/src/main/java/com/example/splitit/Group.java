@@ -71,9 +71,6 @@ public class Group {
         return groupKeys;
     }
 
-    public ArrayList<String> getSettle() {
-        return this.settle;
-    }
 
     public void addGroupMember(String user) {
 
@@ -298,7 +295,7 @@ public class Group {
 
         System.out.println(group.whoShouldPayNext());
 
-        SplitAlgorithm split = new SplitAlgorithm(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>());
+        SplitAlgorithm split = new SplitAlgorithm();
 
 
         //split.minCashFlow(group.settlement, group.groupList.size());

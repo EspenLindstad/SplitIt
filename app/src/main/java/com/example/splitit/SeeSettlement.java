@@ -30,12 +30,17 @@ public class SeeSettlement extends AppCompatActivity {
     private ArrayList<String> debitUsers = new ArrayList<>();
     private ArrayList<String> creditUsers = new ArrayList<>();
     private ArrayList<String> sums = new ArrayList<>();
+    private ArrayList<Double> groupMembers = new ArrayList<>();
 
     private String groupKey;
 
     private Button backBtn;
 
     private TextView topText;
+
+    private Integer count;
+
+    private double[][] settlement;
 
 
     @Override
@@ -49,21 +54,6 @@ public class SeeSettlement extends AppCompatActivity {
         backBtn = findViewById(R.id.arrowBackBtn);
         topText = findViewById(R.id.topTextView);
 
-        debitUsers.add("Trond");
-        debitUsers.add("Per");
-        debitUsers.add("Pål");
-
-        creditUsers.add("Espen");
-        creditUsers.add("Frøya");
-        creditUsers.add("Grunnhild");
-
-        sums.add("100");
-        sums.add("27");
-        sums.add("30");
-
-        customAdapter = new CustomAdapter();
-
-        settlements.setAdapter(customAdapter);
 
         Intent intent = getIntent();
         groupKey = intent.getExtras().getString("groupKey");
@@ -72,8 +62,33 @@ public class SeeSettlement extends AppCompatActivity {
         Task<DocumentSnapshot> documentSnapshotTask = docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                ArrayList<String> temp = documentSnapshot.toObject(Group.class).getSettle();
-                System.out.println("Temp: " + temp);
+                Long temp = (Long) documentSnapshot.get("members");
+                count = temp.intValue();
+                System.out.println("members count: " + count);
+
+                for (String i : (ArrayList<String>) documentSnapshot.get("settlement")) {
+                    groupMembers.add(Double.parseDouble(i));
+                }
+
+                System.out.println("Groupsmembers: " + groupMembers);
+
+                settlement = arrayToMat(groupMembers, count);
+
+                SplitAlgorithm splitter = new SplitAlgorithm();
+
+                splitter.minCashFlow(settlement, count);
+
+                debitUsers = splitter.getDebitors();
+                creditUsers = splitter.getCreditors();
+                sums = splitter.getSums();
+
+                System.out.println("Size og debitUsers");
+                System.out.println(debitUsers.size());
+
+                customAdapter = new CustomAdapter();
+
+                settlements.setAdapter(customAdapter);
+
             }
         });
 
@@ -116,6 +131,20 @@ public class SeeSettlement extends AppCompatActivity {
 
             return view;
         }
+    }
+
+    public double[][] arrayToMat(ArrayList<Double> settlementArr, Integer membercount){
+        int counter = -1;
+        double[][] settlement = new double[membercount][membercount];
+        for(int i = 0; i < membercount; i++){
+            for(int j = 0; j < membercount; j++){
+                counter++;
+                settlement[i][j] = settlementArr.get(counter).doubleValue();
+            }
+        }
+
+        return settlement;
+
     }
 
 
