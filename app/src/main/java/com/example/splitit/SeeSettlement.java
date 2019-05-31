@@ -11,9 +11,17 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class SeeSettlement extends AppCompatActivity {
+
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private ArrayAdapter adapter;
     private CustomAdapter customAdapter;
@@ -34,6 +42,8 @@ public class SeeSettlement extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_see_settlement);
+
+
 
         settlements = findViewById(R.id.settlementsListView);
         backBtn = findViewById(R.id.arrowBackBtn);
@@ -57,6 +67,15 @@ public class SeeSettlement extends AppCompatActivity {
 
         Intent intent = getIntent();
         groupKey = intent.getExtras().getString("groupKey");
+
+        DocumentReference docRef = db.collection("groups").document(groupKey);
+        Task<DocumentSnapshot> documentSnapshotTask = docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                ArrayList<String> temp = documentSnapshot.toObject(Group.class).getSettle();
+                System.out.println("Temp: " + temp);
+            }
+        });
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override

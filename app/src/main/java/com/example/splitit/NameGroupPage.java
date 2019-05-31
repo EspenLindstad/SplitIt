@@ -134,7 +134,8 @@ public class NameGroupPage extends AppCompatActivity {
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                System.out.println("Class of usersting: " + documentSnapshot.get("usersSettlements"));
+                //System.out.println("Class of usersting: " + documentSnapshot.get("usersSettlements").getClass());
+
 
                 if (documentSnapshot.get("usersSettlements") == null) {
                     Map<String, ArrayList<String>> settlementMap = new HashMap<>();
@@ -143,8 +144,10 @@ public class NameGroupPage extends AppCompatActivity {
                     db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
                 }
 
+                //Funker ikke når brukeren er ny
                 Map<String, ArrayList<String>> settlementMap = new HashMap<>();
-                ArrayList<String> memberOf = new ArrayList<>();
+                ArrayList<String> memberOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
+                System.out.println("Test: " + memberOf.isEmpty());
                 memberOf.add(groupKey);
                 settlementMap.put("usersSettlements", memberOf);
                 db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());

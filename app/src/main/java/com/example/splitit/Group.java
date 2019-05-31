@@ -26,6 +26,8 @@ public class Group {
 
     private double[][] settlement;
 
+    private ArrayList<String> settle;
+
     int members;
 
     public Group(String name, ArrayList groupList, ArrayList groupKeys) {
@@ -35,6 +37,8 @@ public class Group {
         this.members = groupList.size();
 
         settlement = new double[groupList.size()][groupList.size()];
+
+        settle = new ArrayList<>();
 
         for (int i = 0; i < groupList.size(); i++) {
             userMap.put(groupList.get(i).toString(), i);
@@ -65,6 +69,10 @@ public class Group {
 
     public ArrayList<String> getGroupKeys() {
         return groupKeys;
+    }
+
+    public ArrayList<String> getSettle() {
+        return this.settle;
     }
 
     public void addGroupMember(String user) {

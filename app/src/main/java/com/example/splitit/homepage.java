@@ -45,6 +45,7 @@ public class homepage extends AppCompatActivity {
 
     private ArrayList<String> grouplist;
     private ArrayList<String> partOf;
+    private ArrayList<String> names;
     ArrayAdapter arrayAdapter;
 
     private String uid;
@@ -83,22 +84,40 @@ public class homepage extends AppCompatActivity {
 
         readData(new PartOfInterface() {
             @Override
-            public void onCallback(ArrayList<String> groups) {
+            public void onCallback(ArrayList<String> groups, ArrayList<String> gnames) {
                 if (partOf != null) {
-                    arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, partOf);
-                    GroupListView.setAdapter(arrayAdapter);
+                    names = new ArrayList<>();
+                    for (String gKey: partOf) {
+                        DocumentReference docRef = db.collection("groups").document(gKey); //Denne må fikses
+                        Task<DocumentSnapshot> documentSnapshotTask = docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot2) {
+                                String temp = documentSnapshot2.toObject(Group.class).getName();
+                                names.add(temp);
+                                System.out.println("len of names: " + names.size());
+                                if (names.size() == partOf.size()) {
+                                    arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, names);
+                                    GroupListView.setAdapter(arrayAdapter);
 
-                    GroupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    GroupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                            Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
+                                            Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
 
-                            nextIntent.putExtra("groupKey", partOf.get(position));
+                                            nextIntent.putExtra("groupKey", partOf.get(position));
 
-                            startActivity(nextIntent);
-                        }
-                    });
+                                            startActivity(nextIntent);
+                                        }
+                                    });
+                                }
+
+
+
+                            }
+                        });
+
+                    }
                 }
             }
 
@@ -143,16 +162,7 @@ public class homepage extends AppCompatActivity {
             }
         });
 
-        readData(new PartOfInterface() {
-            @Override
-            public void onCallback(ArrayList<String> groups) {
-                if (partOf != null) {
-                    arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, partOf);
-                    GroupListView.setAdapter(arrayAdapter);
-                }
-            }
 
-        });
     }
 
     public void readData(PartOfInterface partOfInterface) {
@@ -174,9 +184,11 @@ public class homepage extends AppCompatActivity {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             partOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
+
+
                             System.out.println("Part of: " + partOf);
 
-                            partOfInterface.onCallback(partOf);
+                            partOfInterface.onCallback(partOf, names);
 
                         }
                     });
