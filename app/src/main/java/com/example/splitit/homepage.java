@@ -25,8 +25,14 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class homepage extends AppCompatActivity {
@@ -51,6 +57,8 @@ public class homepage extends AppCompatActivity {
     private String userkey;
 
     public ListView GroupListView;
+
+    private Map<String, String> testMap;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -173,10 +181,29 @@ public class homepage extends AppCompatActivity {
                     docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            partOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
-                            System.out.println("Part of: " + partOf);
+                            ArrayList<String> tull = (ArrayList<String>) documentSnapshot.get("usersSettlements");
+                            //partOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
+                            System.out.println("Part of: " + tull);
+
+                            ArrayList<String> testName = new ArrayList<>();
+                            ArrayList<String> testId = new ArrayList<>();
+
+
+                            for (int a = 0; a<tull.size();a++) {
+                                if (a % 2 == 0) {
+                                    testName.add(tull.get(a));
+                                }
+                                else {
+                                    testId.add(tull.get(a));
+                                }
+                            }
+
+                            System.out.println("names: " + testName);
+                            System.out.println("ids: " + testId);
+
 
                             partOfInterface.onCallback(partOf);
+
 
                         }
                     });
