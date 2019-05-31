@@ -1,5 +1,6 @@
 package com.example.splitit;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,7 +25,11 @@ public class Group {
 
     private Map<String, Integer> userMap = new HashMap<String, Integer>(); //<username, index in matrix>
 
-    private double[][] settlement;
+    private ArrayList<Double> settlementArr = new ArrayList<Double>();
+
+    public Map<String, Integer> getUserMap() {
+        return userMap;
+    }
 
     int members;
 
@@ -34,10 +39,12 @@ public class Group {
         this.groupKeys = groupKeys;
         this.members = groupList.size();
 
-        settlement = new double[groupList.size()][groupList.size()];
 
         for (int i = 0; i < groupList.size(); i++) {
             userMap.put(groupList.get(i).toString(), i);
+            for(int j = 0; j < groupList.size(); j++) {
+                settlementArr.add(0.0);
+            }
         }
     }
 
@@ -45,14 +52,51 @@ public class Group {
         // IKKK SLETT DENNE
     }
 
-    public String getName() {
-        return this.name;
+    public void setUserMap(ArrayList<String> groupList){
+        for(int i = 0;  i< groupList.size(); i++){
+            this.userMap.put(groupList.get(i).toString(), i);
+        }
     }
-
-    public void setName(String name) {this.name = name;}
 
     public String getBaseCurrency(){
         return baseCurrency;
+    }
+
+    public ArrayList<Expense> getExpenses(){
+        return expenses;
+    }
+
+    public ArrayList<Double> getSettlementArray(){
+        return settlementArr;
+    }
+
+
+
+    public double[][] arrayToMat(ArrayList<Double> settlementArr){
+        int size = settlementArr.size()/groupList.size();
+        int counter = -1;
+        double[][] settlement = new double[size][size];
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                counter++;
+                settlement[i][j] = settlementArr.get(counter);
+            }
+        }
+        return settlement;
+
+    }
+
+    public ArrayList<Double> matToArray(double[][] mat){
+
+        ArrayList<Double> arr = new ArrayList<>();
+        int counter = -1;
+        for(int i = 0; i < mat.length; i++){
+            for(int j = 0; j < mat.length; j++){
+                counter++;
+                arr.add(mat[i][j]);
+            }
+        }
+        return arr;
     }
 
     public void setBaseCurrency(String baseCurrency){
@@ -67,9 +111,14 @@ public class Group {
         return groupKeys;
     }
 
+    public ArrayList<Double> getSettlementArr(){
+        return settlementArr;
+    }
+
     public void addGroupMember(String user) {
 
         //List<String> groupList = new ArrayList<>();
+        double[][] settlement = arrayToMat(settlementArr);
 
         groupList.add(user);
         userMap.put(user, members);
@@ -82,10 +131,14 @@ public class Group {
                 temp[i][j] = settlement[i][j];
             }
         }
-        settlement = temp;
+
+        this.settlementArr = matToArray(temp);
     }
 
     public void deleteGroupMember(String user) {
+
+        double[][] settlement = arrayToMat(settlementArr);
+
 
 
         for (int i = 0; i < expenses.size(); i++) {
@@ -142,37 +195,46 @@ public class Group {
             }
         }
 
-        settlement = temp;
+        members--;
+
+        settlementArr = matToArray(temp);
 
         groupList.remove(user);
 
 
     }
 
-    public void addExpense(int expense, ArrayList<String> participants, String user_who_payed) {
+    public void addExpense(double expense, ArrayList<String> participants, String user_who_payed, String name) {
 
-        Expense expenseGroup = new Expense(participants, user_who_payed, expense);
+        double [][] settlement = arrayToMat(settlementArr);
+
+        Expense expenseGroup = new Expense(participants, user_who_payed, expense, name);
 
         expenses.add(expenseGroup);
 
-        int dividedExpense = expenseGroup.getCostPerPerson();
+        double dividedExpense = expenseGroup.getCostPerPerson();
 
-        int user_who_payed_index = userMap.get(user_who_payed);
+        int user_who_payed_index = getUserMap().get(user_who_payed);
 
         if (participants.size() == groupList.size()) { // hvis det skal deles på alle
             for (int i = 0; i < settlement.length; i++) {
-                settlement[i][user_who_payed_index] = dividedExpense;
+                settlement[i][user_who_payed_index] = settlement[i][user_who_payed_index] + dividedExpense;
             }
         } else {
-            settlement[user_who_payed_index][user_who_payed_index] = dividedExpense;
+            settlement[user_who_payed_index][user_who_payed_index] = settlement[user_who_payed_index][user_who_payed_index] + dividedExpense;
             for (int i = 0; i < participants.size(); i++) {
-                settlement[userMap.get(participants.get(i))][user_who_payed_index] = dividedExpense;
+                settlement[userMap.get(participants.get(i))][user_who_payed_index] = settlement[userMap.get(participants.get(i))][user_who_payed_index]+ dividedExpense;
             }
         }
+
+
+        this.settlementArr = matToArray(settlement);
 
     }
 
     public void removeExpense(Expense expense){
+
+        double[][] settlement = arrayToMat(settlementArr);
 
         ArrayList<String> members = expense.getExpenseMembers();
         String user_who_payed = expense.getMemberPayed();
@@ -181,11 +243,12 @@ public class Group {
             int memberIndex = userMap.get(member);
             settlement[memberIndex][user_who_payed_index] = settlement[memberIndex][user_who_payed_index] - expense.getCostPerPerson();
         }
-
+        settlementArr = matToArray(settlement);
         expenses.remove(expense);
     }
 
     public String whoShouldPayNext(){
+        double[][] settlement = arrayToMat(settlementArr);
 
         Map<String, Integer> debtMap = new HashMap<>(); // <user, total debt>
 
@@ -244,14 +307,50 @@ public class Group {
         expenseMembers1.add("p2");
         expenseMembers1.add("p5");
 
-        group.addExpense(100, expenseMembers1, "p4");
-/*
-        ArrayList<String> expenseMembers2 = new ArrayList<>();
-        expenseMembers2.add("p3");
-        expenseMembers2.add("p1");
-        expenseMembers2.add("p4");
 
-        group.addExpense(124, expenseMembers2, "p2");
+        ArrayList<Double> sa;
+        sa = group.getSettlementArr();
+        System.out.println(sa);
+
+        for (int i = 0; i < sa.size(); i++) {
+            sa.set(i, i * 1.0);
+        }
+
+        System.out.println(sa);
+        System.out.println("group.arrayToMat(sa)");
+
+        double[][] s = group.arrayToMat(sa);
+        for (double[] row : s) {
+
+            // converting each row as string
+            // and then printing in a separate line
+            System.out.println(Arrays.toString(row));
+        }
+
+        System.out.println("HER");
+        ArrayList<Double> arry = group.matToArray(s);
+        System.out.println(arry);
+
+        /////////////////////////
+
+        group.addExpense(100, expenseMembers1, "p4", "hei");
+
+        sa = group.getSettlementArr();
+        System.out.println("sa");
+        System.out.println(sa);
+
+        System.out.println("group.arrayToMat(sa)");
+
+        s = group.arrayToMat(sa);
+        for (double[] row : s) {
+
+            // converting each row as string
+            // and then printing in a separate line
+            System.out.println(Arrays.toString(row));
+        }
+
+/*
+        group.addExpense(124, expenseMembers2, "p2", "skjer");
 
 
         ArrayList<String> expenseMembers3 = new ArrayList<>();
@@ -259,12 +358,13 @@ public class Group {
         expenseMembers3.add("p1");
         expenseMembers3.add("p2");
 
-        group.addExpense(432, expenseMembers2, "p4");
-*/
+        group.addExpense(432, expenseMembers2, "p4", "sap");
+/*
+
         // graph[i][j] indicates the amount
         // that person i needs to pay person j
 
-        System.out.println("BEFORE DELETING");
+  /*      System.out.println("BEFORE DELETING");
 
         System.out.println(group.userMap);
 
@@ -288,11 +388,9 @@ public class Group {
             System.out.println(Arrays.toString(row));
         }
 
-        System.out.println(group.whoShouldPayNext());
+        //System.out.println(group.whoShouldPayNext());
 
-        SplitAlgorithm split = new SplitAlgorithm(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>());
-
-
+        //SplitAlgorithm split = new SplitAlgorithm(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>());
         //split.minCashFlow(group.settlement, group.groupList.size());
 
 
@@ -301,5 +399,6 @@ public class Group {
 
         // Print the solution
         //minCashFlow(graph, N);
+    */
     }
 }

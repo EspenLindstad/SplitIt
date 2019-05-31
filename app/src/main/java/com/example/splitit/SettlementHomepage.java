@@ -31,6 +31,7 @@ public class SettlementHomepage extends AppCompatActivity {
 
     private Button addBtn;
     private Button goToSettlementBtn;
+    private Button deleteBtn;
 
     ArrayAdapter arrayAdapter;
 
@@ -49,6 +50,7 @@ public class SettlementHomepage extends AppCompatActivity {
         groupKey = intent.getExtras().getString("groupKey");
 
         addBtn = (Button) findViewById(R.id.addBtn);
+        deleteBtn = (Button) findViewById(R.id.deleteBtn);
 
         goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
 
@@ -87,6 +89,18 @@ public class SettlementHomepage extends AppCompatActivity {
                 startActivity(newIntent);
             }
         });
+
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent newDIntent = new Intent(getApplicationContext(), DeleteExpenseActivity.class);
+                newDIntent.putExtra("groupKey", groupKey);
+                startActivity(newDIntent);
+            }
+        });
+
+
 
     }
 
