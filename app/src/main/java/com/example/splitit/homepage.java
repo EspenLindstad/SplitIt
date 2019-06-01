@@ -70,18 +70,15 @@ public class homepage extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
+                case R.id.navigation_dashbboard:
+                    mTextMessage.setText(R.string.title_profile);
+                    GroupListView.setVisibility(View.GONE);
+                    signOutBtn.setVisibility(View.VISIBLE);
+                    return true;
                 case R.id.navigation_home:
                     mTextMessage.setText(R.string.title_settlements);
                     GroupListView.setVisibility(View.VISIBLE);
-                    return true;
-                case R.id.navigation_dashbboard:
-                    mTextMessage.setText(R.string.title_profile);
-                    GroupListView.setVisibility(View.INVISIBLE);
-                    return true;
-                case R.id.navigation_userlist:
-                    mTextMessage.setText(R.string.title_userlist);
-                    Intent intent = new Intent(homepage.this, UserList.class);
-                    startActivity(intent);
+                    signOutBtn.setVisibility(View.GONE);
                     return true;
             }
             return false;
@@ -126,9 +123,10 @@ public class homepage extends AppCompatActivity {
         final Button addSettlement = (Button) findViewById(R.id.addSettlement);
 
         signOutBtn = (Button) findViewById(R.id.logoutBtn);
+        signOutBtn.setVisibility(View.GONE);
 
         GroupListView = (ListView) findViewById(R.id.GroupListView);
-        GroupListView.setVisibility(View.INVISIBLE);
+        GroupListView.setVisibility(View.VISIBLE);
 
         signOutBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

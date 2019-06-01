@@ -17,7 +17,6 @@
         <activity android:name=".ExchangeActivity" />
         <activity android:name=".NameGroupPage" />
         <activity android:name=".signUp" />
-        <activity android:name=".UserList" />
         <activity android:name=".SeeSettlement" />
         <activity android:name=".AddGroupMember" />
         <activity android:name=".DatabaseActivity" />
