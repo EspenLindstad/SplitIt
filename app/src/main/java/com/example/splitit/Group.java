@@ -204,7 +204,7 @@ public class Group {
 
     }
 
-    public void addExpense(double expense, ArrayList<String> participants, String user_who_payed, String name) {
+    public ArrayList<Double> addExpense(double expense, ArrayList<String> participants, String user_who_payed, String name, ArrayList<Double> prevSettlement) {
 
         double [][] settlement = arrayToMat(settlementArr);
 
@@ -229,6 +229,7 @@ public class Group {
 
 
         this.settlementArr = matToArray(settlement);
+        return settlementArr;
 
     }
 
@@ -332,22 +333,6 @@ public class Group {
         System.out.println(arry);
 
         /////////////////////////
-
-        group.addExpense(100, expenseMembers1, "p4", "hei");
-
-        sa = group.getSettlementArr();
-        System.out.println("sa");
-        System.out.println(sa);
-
-        System.out.println("group.arrayToMat(sa)");
-
-        s = group.arrayToMat(sa);
-        for (double[] row : s) {
-
-            // converting each row as string
-            // and then printing in a separate line
-            System.out.println(Arrays.toString(row));
-        }
 
 /*
         group.addExpense(124, expenseMembers2, "p2", "skjer");

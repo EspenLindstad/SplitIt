@@ -14,6 +14,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,6 +44,10 @@ public class ExchangeActivity extends AppCompatActivity {
     String baseCurrency = "USD";
     private ArrayList<String> expenseMembers = new ArrayList<>();
     String expenseName;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private String currentUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,11 @@ public class ExchangeActivity extends AppCompatActivity {
 
         //final Spinner toSpinner = (Spinner) findViewById(R.id.toSpinner);
         resultVal = 0.0;
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        String email = user.getEmail();
+        currentUser = usernameFromEmail(email);
 
 
         Intent intent = getIntent();
@@ -78,7 +89,6 @@ public class ExchangeActivity extends AppCompatActivity {
 
                         if (!expenseMembers.contains(groupMembers.get(position))) {
                             expenseMembers.add(groupMembers.get(position));
-
 
                         }
                     }
@@ -159,8 +169,6 @@ public class ExchangeActivity extends AppCompatActivity {
                 try {
                     thread.join();
 
-                    String memberPayed = "sucks";
-
                     docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -174,13 +182,10 @@ public class ExchangeActivity extends AppCompatActivity {
 
                             group.setUserMap(group.getGroupList());
 
-                            System.out.println("group.getUserMap()");
+                            ArrayList<Double> settlementArr = documentSnapshot.toObject(Group.class).getSettlementArr();
 
-                            System.out.println(group.getUserMap());
-
-                            System.out.println("settlementArr");
-
-                            ArrayList<Double> settlementArr = group.getSettlementArr();
+                            System.out.println("settlement from firebase");
+                            System.out.println(settlementArr);
 
                             if(settlementArr.isEmpty()){
                                 for(int i = 0; i < group.getUserMap().size()*group.getUserMap().size(); i++){
@@ -188,11 +193,21 @@ public class ExchangeActivity extends AppCompatActivity {
                                 }
                             }
 
-                            group.addExpense(resultVal, expenseMembers, memberPayed, expenseName);
 
+                            settlementArr = group.addExpense(resultVal, expenseMembers, currentUser, expenseName, settlementArr); // current user = member payed
+
+                            System.out.println("resulting value");
+                            System.out.println(resultVal);
+                            System.out.println("settlement array");
                             System.out.println(group.getSettlementArr());
-
-                            settlementArr = group.getSettlementArr();
+                            System.out.println("expenseMembers");
+                            System.out.println(expenseMembers);
+                            System.out.println("current user");
+                            System.out.println(currentUser);
+                            System.out.println("expense name");
+                            System.out.println(expenseName);
+                            System.out.println("userMap");
+                            System.out.println(group.getUserMap());
 
                             //documentSnapshot.toObject(Group.class).addExpense(resultVal ,expenseMembers, memberPayed, expenseName);
 
@@ -235,6 +250,14 @@ public class ExchangeActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
+        } else {
+            return email;
+        }
     }
 
 
