@@ -5,16 +5,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import org.json.JSONObject;
@@ -27,6 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ExchangeActivity extends AppCompatActivity {
@@ -36,16 +45,24 @@ public class ExchangeActivity extends AppCompatActivity {
     private ArrayList<String> groupMembers;
     ArrayAdapter arrayAdapter;
     ListView userListView;
-    String baseCurrency;
+    String baseCurrency = "USD";
+    private ArrayList<String> expenseMembers = new ArrayList<>();
+    String expenseName;
+
+    private FirebaseUser user;
+    public FirebaseAuth Auth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exchange);
 
-        final Button button = (Button) findViewById(R.id.button);
+        user = Auth.getCurrentUser();
+
+        final Button addExpenseBtn = (Button) findViewById(R.id.addExpenseBtn);
         final TextView moneyText = (TextView) findViewById(R.id.moneyText);
         final Spinner fromSpinner = (Spinner) findViewById(R.id.fromSpinner);
+        expenseName = ((EditText) findViewById(R.id.settlementName)).getText().toString();
 
         userListView = (ListView) findViewById(R.id.userListView);
 
@@ -62,12 +79,21 @@ public class ExchangeActivity extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 groupMembers = documentSnapshot.toObject(Group.class).getGroupList();
                 //set base currency må komme før her
-                documentSnapshot.toObject(Group.class).setBaseCurrency("USD");
-                //
-                baseCurrency = documentSnapshot.toObject(Group.class).getBaseCurrency();
                 System.out.println("These are my mfuckin gmember: " + groupMembers);
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
                 userListView.setAdapter(arrayAdapter);
+
+                userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        if (!expenseMembers.contains(groupMembers.get(position))) {
+                            expenseMembers.add(groupMembers.get(position));
+
+
+                        }
+                    }
+                });
 
 
             }
@@ -83,9 +109,11 @@ public class ExchangeActivity extends AppCompatActivity {
                 HttpURLConnection urlConnection = null;
                 try {
                     try {
+
+
                         String mainUrl = "http://data.fixer.io/api/latest?access_key=be99fccf6933a51407eb597a21f7dcb3&symbols=";
                         System.out.println(fromSpinner.getSelectedItem());
-                        String updatedUrl = mainUrl + fromSpinner.getSelectedItem().toString();
+                        String updatedUrl = mainUrl; //+ fromSpinner.getSelectedItem().toString();
 
                         URL url = new URL(updatedUrl);
 
@@ -99,23 +127,20 @@ public class ExchangeActivity extends AppCompatActivity {
                             fullStr += inputLine;
                         }
 
-                        System.out.println("fullStr");
-                        System.out.println(fullStr);
 
                         JSONObject jsonObj = new JSONObject(fullStr);
                         JSONObject result = jsonObj.getJSONObject("rates");
 
-                        double rateValue = result.getDouble("AUD");
-
+                        double rateValue = result.getDouble(fromSpinner.getSelectedItem().toString());
+                        double rateValueBaseCurrency = result.getDouble(baseCurrency);
 
                         Double moneyValue = Double.valueOf(moneyText.getText().toString());
 
                         if (fromSpinner.getSelectedItem().equals(baseCurrency)) {
                             resultVal = moneyValue;
-                            //nytt
 
                         } else {
-                            Double resultValue = moneyValue * rateValue;
+                            Double resultValue = moneyValue * rateValueBaseCurrency/rateValue;
                             resultVal = resultValue;
                         }
                     } finally {
@@ -125,7 +150,8 @@ public class ExchangeActivity extends AppCompatActivity {
 
 
                 } catch (NumberFormatException e) {
-                    //TODO: Alertbox ekle
+                    e.getCause();
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -133,43 +159,92 @@ public class ExchangeActivity extends AppCompatActivity {
             }
         });
 
-        button.setOnClickListener(new View.OnClickListener()
 
+        addExpenseBtn.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v) {
                 thread.start();
+
+
                 try {
                     thread.join();
 
-                    ArrayList<String> expenseMembers = new ArrayList<>();
-                    expenseMembers.add("hei");
-                    String memberPayed = "iuh";
+                    String memberPayed = usernameFromEmail(user.getEmail());
+                    System.out.println("this is the memberpayed: " + memberPayed);
 
-                    Map<String, Object> expenseMap = new HashMap<>();
-                    Expense expense = new Expense(expenseMembers, memberPayed, resultVal.intValue());
-                    expenseMap.put("expenses", expense);
-                    //Expense(ArrayList<String> expenseMembers, String memberPayed, int expense)
-                    System.out.println("this is the resulting value");
-                    System.out.println(resultVal);
-                    //db.collection("groups").document(groupKey).set(expenseMap, SetOptions.merge());
+
+                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+
+                            //vi må intizialisere en tom array i starten slik at vi kan hente den ut, adde settlement, og sende den inn igjen.
+
+                            //C: First add the expense locally
+
+                            Group group = documentSnapshot.toObject(Group.class);
+
+
+                            Map<String, Integer> temporaryMap = new HashMap<>();
+                            for(int i = 0;  i< group.getGroupList().size(); i++){
+                                temporaryMap.put(group.getGroupList().get(i).toString(), i);
+                            }
+
+                            group.setUserMap(temporaryMap);
+
+                            System.out.println("group.getUserMap()");
+
+                            System.out.println(group.getUserMap());
+
+                            System.out.println("settlementArr");
+
+                            ArrayList<Double> settlementArr = group.getSettlementArr();
+
+                            if(settlementArr.isEmpty()){
+                                for(int i = 0; i < group.getUserMap().size()*group.getUserMap().size(); i++){
+                                    settlementArr.add(0.0);
+                                }
+                            }
+
+                            group.addExpense(resultVal, expenseMembers, memberPayed, expenseName);
+
+                            System.out.println(group.getSettlementArr());
+
+                            settlementArr = group.getSettlementArr();
+
+                            //documentSnapshot.toObject(Group.class).addExpense(resultVal ,expenseMembers, memberPayed, expenseName);
+
+
+                            /*ArrayList<Double> settlement = new ArrayList<>();
+                            settlement.add(1.0);
+                            settlement.add(2.0);
+                            settlement.add(3.0);*/
+
+                            Map<String, Object> settlementMap = new HashMap<String, Object>();
+                            settlementMap.put("settlement", settlementArr);
+                            db.collection("groups").document(groupKey).set(settlementMap, SetOptions.merge());
+/*
+                            Map<String, Object> expenseMap = new HashMap<>();
+                            //expenseMap.put("expenseValue", resultVal);
+                            //expenseMap.put("groupMembers", groupMembers);
+                            //expenseMap.put("memberWhoPayed", memberPayed);
+                   */       //db.collection("groups").document(groupKey).set(expenseMap, SetOptions.merge());
+
+                            //documentSnapshot.toObject(Group.class).addExpense(5 ,expenseMembers, memberPayed);
+                            //String p = documentSnapshot.toObject(Group.class).whoShouldPayNext();
+                            //System.out.println(p);
+
+                            Intent newIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
+                            newIntent.putExtra("groupKey", groupKey);
+                            startActivity(newIntent);
+                        }
+                    });
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-/*
-                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                        ArrayList<String> expenseMembers = new ArrayList<>();
-                        expenseMembers.add("hei");
-                        String memberPayed = "iuh";
-                        documentSnapshot.toObject(Group.class).addExpense(resultVal.intValue(),expenseMembers, memberPayed);
-                        String p = documentSnapshot.toObject(Group.class).whoShouldPayNext();
-                        System.out.println(p);
-                    }
-                });*/
             }
 
 
@@ -179,8 +254,13 @@ public class ExchangeActivity extends AppCompatActivity {
 
     }
 
-
-        //addExpense(int expense, ArrayList<String> participants, String user_who_payed)
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
+        } else {
+            return email;
+        }
+    }
 
 
 }

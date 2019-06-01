@@ -51,6 +51,9 @@ public class homepage extends AppCompatActivity {
 
     private ArrayList<String> grouplist;
     private ArrayList<String> partOf;
+
+    private ArrayList<String> testNames;
+    private ArrayList<String> testIds;
     ArrayAdapter arrayAdapter;
 
     private String uid;
@@ -91,9 +94,9 @@ public class homepage extends AppCompatActivity {
 
         readData(new PartOfInterface() {
             @Override
-            public void onCallback(ArrayList<String> groups) {
-                if (partOf != null) {
-                    arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, partOf);
+            public void onCallback(ArrayList<String> names, ArrayList<String> ids) {
+                if (names != null) {
+                    arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, names);
                     GroupListView.setAdapter(arrayAdapter);
 
                     GroupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -102,7 +105,7 @@ public class homepage extends AppCompatActivity {
 
                             Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
 
-                            nextIntent.putExtra("groupKey", partOf.get(position));
+                            nextIntent.putExtra("groupKey", ids.get(position));
 
                             startActivity(nextIntent);
                         }
@@ -151,16 +154,18 @@ public class homepage extends AppCompatActivity {
             }
         });
 
+        /*
         readData(new PartOfInterface() {
             @Override
-            public void onCallback(ArrayList<String> groups) {
-                if (partOf != null) {
-                    arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, partOf);
+            public void onCallback(ArrayList<String> names, ArrayList<String> ids) {
+                if (names != null) {
+                    arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, names);
                     GroupListView.setAdapter(arrayAdapter);
                 }
             }
 
         });
+        */
     }
 
     public void readData(PartOfInterface partOfInterface) {
@@ -185,24 +190,25 @@ public class homepage extends AppCompatActivity {
                             //partOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
                             System.out.println("Part of: " + tull);
 
-                            ArrayList<String> testName = new ArrayList<>();
-                            ArrayList<String> testId = new ArrayList<>();
+                            testNames = new ArrayList<>();
+                            testIds = new ArrayList<>();
 
+                            if (testNames.isEmpty()) {
+                                for (int a = 0; a<tull.size();a++) {
+                                    if (a % 2 == 0) {
+                                        testNames.add(tull.get(a));
+                                    }
+                                    else {
+                                        testIds.add(tull.get(a));
+                                    }
+                                }
 
-                            for (int a = 0; a<tull.size();a++) {
-                                if (a % 2 == 0) {
-                                    testName.add(tull.get(a));
-                                }
-                                else {
-                                    testId.add(tull.get(a));
-                                }
+                                System.out.println("names: " + testNames);
+                                System.out.println("ids: " + testIds);
                             }
 
-                            System.out.println("names: " + testName);
-                            System.out.println("ids: " + testId);
 
-
-                            partOfInterface.onCallback(partOf);
+                            partOfInterface.onCallback(testNames, testIds);
 
 
                         }

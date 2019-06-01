@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SettlementHomepage"></activity>
+        <activity android:name=".DeleteExpenseActivity"></activity>
+        <activity android:name=".SettlementHomepage" />
         <activity android:name=".ExchangeActivity" />
         <activity android:name=".NameGroupPage" />
         <activity android:name=".signUp" />
@@ -26,6 +27,7 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

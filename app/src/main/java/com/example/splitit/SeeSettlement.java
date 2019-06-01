@@ -66,8 +66,8 @@ public class SeeSettlement extends AppCompatActivity {
                 count = temp.intValue();
                 System.out.println("members count: " + count);
 
-                for (String i : (ArrayList<String>) documentSnapshot.get("settlement")) {
-                    groupMembers.add(Double.parseDouble(i));
+                for (Double i : (ArrayList<Double>) documentSnapshot.get("settlement")) {
+                    groupMembers.add(i);
                 }
 
                 System.out.println("Groupsmembers: " + groupMembers);

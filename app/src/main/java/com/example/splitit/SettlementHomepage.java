@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,6 +32,7 @@ public class SettlementHomepage extends AppCompatActivity {
 
     private Button addBtn;
     private Button goToSettlementBtn;
+    private Button deleteBtn;
 
     ArrayAdapter arrayAdapter;
 
@@ -49,6 +51,7 @@ public class SettlementHomepage extends AppCompatActivity {
         groupKey = intent.getExtras().getString("groupKey");
 
         addBtn = (Button) findViewById(R.id.addBtn);
+        deleteBtn = (Button) findViewById(R.id.deleteBtn);
 
         goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
 
@@ -70,7 +73,9 @@ public class SettlementHomepage extends AppCompatActivity {
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                groupMembers = documentSnapshot.toObject(Group.class).getGroupList();
+
+                groupMembers = (ArrayList<String>) documentSnapshot.get("groupList");
+
                 System.out.println("These are my mfuckin gmember: " + groupMembers);
 
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
@@ -87,6 +92,18 @@ public class SettlementHomepage extends AppCompatActivity {
                 startActivity(newIntent);
             }
         });
+
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent newDIntent = new Intent(getApplicationContext(), DeleteExpenseActivity.class);
+                newDIntent.putExtra("groupKey", groupKey);
+                startActivity(newDIntent);
+            }
+        });
+
+
 
     }
 

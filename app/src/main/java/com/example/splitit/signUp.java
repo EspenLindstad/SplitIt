@@ -144,7 +144,7 @@ public class signUp extends AppCompatActivity {
     }
 
 
-    private String usernameFromEmail(String email) {
+    public String usernameFromEmail(String email) {
         if (email.contains("@")) {
             return email.split("@")[0];
         } else {

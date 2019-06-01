@@ -94,15 +94,12 @@ public class AddGroupMember extends AppCompatActivity {
         });
 
 
-
         userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (!memberlist.contains(usernamelist.get(position))) {
                     memberlist.add(usernamelist.get(position));
                     userKeys.add(userkeylist.get(position));
-
-
 
                 }
                 changeClickability();
