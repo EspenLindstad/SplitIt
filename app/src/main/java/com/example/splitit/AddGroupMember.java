@@ -7,13 +7,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,6 +29,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -41,12 +46,13 @@ public class AddGroupMember extends AppCompatActivity {
     public FirebaseAuth mAuth;
 
 
-    private static final String TAG = "UuserList";
+    private static final String TAG = "UuerList";
     private String displayName;
+    private String userkey;
 
     private DatabaseReference userlistReference;
     private ValueEventListener mUserListListener;
-    private ArrayList<String> usernamelist = new ArrayList<>();
+    public ArrayList<String> usernamelist = new ArrayList<>();
     private ArrayList<String> userkeylist = new ArrayList<>();
     private ArrayList<String> userKeys = new ArrayList<>();
     private ArrayList<String> memberlist = new ArrayList<>();
@@ -70,6 +76,16 @@ public class AddGroupMember extends AppCompatActivity {
 
         user = Auth.getCurrentUser();
 
+        Intent intent = getIntent();
+
+        userkey = intent.getExtras().getString("userkey");
+        System.out.println("this is the userkey" + userkey);
+        System.out.println(memberlist);
+
+        memberlist.add(usernameFromEmail(user.getEmail()));
+        System.out.println(memberlist);
+        userKeys.add(userkey);
+
 
 
         userlistReference = FirebaseDatabase.getInstance().getReference().child("users");
@@ -87,6 +103,7 @@ public class AddGroupMember extends AppCompatActivity {
         readData(new MyCallback() {
             @Override
             public void onCallback(ArrayList<String> names, ArrayList<String> keys) {
+                System.out.println(usernamelist);
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, usernamelist);
                 userListView.setAdapter(arrayAdapter);
             }
@@ -98,11 +115,23 @@ public class AddGroupMember extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (!memberlist.contains(usernamelist.get(position))) {
+                    view.setBackgroundColor(0xFF00FF00);
+                    view.invalidate();
                     memberlist.add(usernamelist.get(position));
                     userKeys.add(userkeylist.get(position));
 
                 }
+                else {
+                    memberlist.remove(usernamelist.get(position));
+                    userKeys.remove(userkeylist.get(position));
+                    view.setBackgroundColor(0x00000000);
+                    view.invalidate();
+
+                }
                 changeClickability();
+
+                System.out.println(memberlist);
+
 
             }
         });
@@ -128,15 +157,19 @@ public class AddGroupMember extends AppCompatActivity {
 
 
     private void changeClickability() {
-        if (!memberlist.isEmpty()) {
+        if (memberlist.size() > 1) {
             nextButton.setEnabled(true);
+        }
+        else {
+            nextButton.setEnabled(false);
         }
 
     }
 
 
-
     public void readData(MyCallback myCallback) {
+
+
         final Task<QuerySnapshot> querySnapshotTask = db.collection("users")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -145,30 +178,19 @@ public class AddGroupMember extends AppCompatActivity {
 
                             if (user != null) {
                                 // User is Login
-                                displayName = user.getDisplayName();
-
-                                // If the above were null, iterate the provider data
-                                // and set with the first non null data
-                                for (UserInfo userInfo : user.getProviderData()) {
-                                    if (displayName == null && userInfo.getDisplayName() != null) {
-                                        displayName = userInfo.getDisplayName();
-                                    }
-                                }
+                                displayName = usernameFromEmail(user.getEmail());
 
                             }
 
                             String name = document.get("name").toString();
-                            String temp = user.getUid();
                             String uid = document.get("userID").toString();
 
-                            System.out.println("comparrison: " + temp + " " + uid);
 
-                            System.out.println(displayName);
-                            if (!temp.equals(uid)) {
+                            if (!name.equals(displayName)) {
                                 usernamelist.add(name);
-                                userkeylist.add(document.getId());
-
+                                userkeylist.add(uid);
                             }
+
 
                         }
                     } else {
@@ -177,4 +199,13 @@ public class AddGroupMember extends AppCompatActivity {
                     myCallback.onCallback(usernamelist, userKeys);
                 });
     }
+
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
+        } else {
+            return email;
+        }
+    }
+
 }

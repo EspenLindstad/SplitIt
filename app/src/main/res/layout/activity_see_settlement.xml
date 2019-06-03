@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".SeeSettlement">
 
+    <TextView
+        android:id="@+id/noListTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="No settlement yet"
+        app:layout_constraintBottom_toBottomOf="@+id/settlementsListView"
+        app:layout_constraintEnd_toEndOf="@+id/settlementsListView"
+        app:layout_constraintStart_toStartOf="@+id/settlementsListView"
+        app:layout_constraintTop_toTopOf="@+id/settlementsListView" />
+
     <Button
         android:id="@+id/arrowBackBtn"
         style="@style/Widget.AppCompat.Button.Borderless"

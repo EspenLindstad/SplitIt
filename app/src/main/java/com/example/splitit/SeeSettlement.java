@@ -18,6 +18,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class SeeSettlement extends AppCompatActivity {
 
@@ -37,6 +40,7 @@ public class SeeSettlement extends AppCompatActivity {
     private Button backBtn;
 
     private TextView topText;
+    private TextView noListTextView;
 
     private Integer count;
 
@@ -53,6 +57,8 @@ public class SeeSettlement extends AppCompatActivity {
         settlements = findViewById(R.id.settlementsListView);
         backBtn = findViewById(R.id.arrowBackBtn);
         topText = findViewById(R.id.topTextView);
+        noListTextView = (TextView) findViewById(R.id.noListTextView);
+        noListTextView.setVisibility(View.GONE);
 
 
         Intent intent = getIntent();
@@ -62,32 +68,57 @@ public class SeeSettlement extends AppCompatActivity {
         Task<DocumentSnapshot> documentSnapshotTask = docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Group group = documentSnapshot.toObject(Group.class);
+
+                Map<String, Integer> temporaryMap;
+
+                temporaryMap = group.getUserMap();
+
                 Long temp = (Long) documentSnapshot.get("members");
                 count = temp.intValue();
                 System.out.println("members count: " + count);
 
-                for (Double i : (ArrayList<Double>) documentSnapshot.get("settlement")) {
-                    groupMembers.add(i);
+                ArrayList<Double> array = (ArrayList<Double>) documentSnapshot.get("settlement");
+
+                if (array != null) {
+                    for (Double i : (ArrayList<Double>) documentSnapshot.get("settlement")) {
+                        groupMembers.add(i);
+                    }
+                    System.out.println("Groupsmembers: " + groupMembers);
+
+                    settlement = arrayToMat(groupMembers, count);
+
+                    SplitAlgorithm splitter = new SplitAlgorithm();
+
+                    splitter.minCashFlow(settlement, count);
+
+
+                    debitUsers = splitter.getDebitors();
+                    creditUsers = splitter.getCreditors();
+                    sums = splitter.getSums();
+
+                    // Dette må testes mer
+                    for (String i : debitUsers) {
+                        for (Map.Entry<String, Integer> entry : temporaryMap.entrySet()) {
+                            if (entry.getValue().equals(i)) {
+                                System.out.println(entry.getKey());
+                            }
+                        }
+                    }
+
+
+                    System.out.println("Size og debitUsers");
+                    System.out.println(debitUsers.size());
+
+                    customAdapter = new CustomAdapter();
+
+                    settlements.setAdapter(customAdapter);
+                }
+                else {
+                    noListTextView.setVisibility(View.VISIBLE);
                 }
 
-                System.out.println("Groupsmembers: " + groupMembers);
 
-                settlement = arrayToMat(groupMembers, count);
-
-                SplitAlgorithm splitter = new SplitAlgorithm();
-
-                splitter.minCashFlow(settlement, count);
-
-                debitUsers = splitter.getDebitors();
-                creditUsers = splitter.getCreditors();
-                sums = splitter.getSums();
-
-                System.out.println("Size og debitUsers");
-                System.out.println(debitUsers.size());
-
-                customAdapter = new CustomAdapter();
-
-                settlements.setAdapter(customAdapter);
 
             }
         });
@@ -120,14 +151,10 @@ public class SeeSettlement extends AppCompatActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             view = getLayoutInflater().inflate(R.layout.customlayout, null);
 
-            TextView debitUser = (TextView)view.findViewById(R.id.debitUserTextView);
             TextView creditUser = (TextView)view.findViewById(R.id.creditUserTextView);
-            TextView arrow = (TextView)view.findViewById(R.id.textView10);
-            TextView sum = (TextView)view.findViewById(R.id.sumTextView);
+            //TextView arrow = (TextView)view.findViewById(R.id.textView10);
 
-            debitUser.setText(debitUsers.get(i));
-            creditUser.setText(creditUsers.get(i));
-            sum.setText(sums.get(i));
+            creditUser.setText(creditUsers.get(i) + " ows " + debitUsers.get(i) + " " + sums.get(i) );
 
             return view;
         }

@@ -95,6 +95,9 @@ public class homepage extends AppCompatActivity {
                 if (names != null) {
                     arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, names);
                     GroupListView.setAdapter(arrayAdapter);
+                    GroupListView.setVisibility(View.VISIBLE);
+
+
 
                     GroupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
@@ -147,6 +150,8 @@ public class homepage extends AppCompatActivity {
                 // Creating an intent, from the MainActivity to AnotherActivity
                 Intent intent = new Intent(homepage.this, AddGroupMember.class);
 
+                intent.putExtra("userkey", userkey);
+
                 // Invoking the intent, start AnotherActivity
                 startActivity(intent);
             }
@@ -191,7 +196,8 @@ public class homepage extends AppCompatActivity {
                             testNames = new ArrayList<>();
                             testIds = new ArrayList<>();
 
-                            if (testNames.isEmpty()) {
+                            if (tull != null) {
+                                //Funker ikke med ny bruker
                                 for (int a = 0; a<tull.size();a++) {
                                     if (a % 2 == 0) {
                                         testNames.add(tull.get(a));

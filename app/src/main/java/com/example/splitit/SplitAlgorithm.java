@@ -2,6 +2,7 @@ package com.example.splitit;
 
 
 import android.content.Intent;
+import android.location.Geocoder;
 
 import java.util.ArrayList;
 
@@ -156,6 +157,7 @@ public class SplitAlgorithm {
         int N = 3;
         // Print the solution
         minCashFlow(graph, N);
+
 
 
     }
