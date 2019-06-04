@@ -128,6 +128,13 @@ public class NameGroupPage extends AppCompatActivity {
                         uniqueKey = documentReference.getId();
                         System.out.println("Dette er nøkkelen i writenewgroup: " + uniqueKey);
 
+                        System.out.println("These are the memberkeys: " + memberKeys);
+                        System.out.println("These are the membernames: " + memberlist);
+
+                        if (memberKeys.contains(null)) {
+                            memberKeys.remove(null);
+                        }
+
                         for (String member : memberKeys) {
                             addUserToSettlement(uniqueKey, member, ((TextView) findViewById(R.id.editText)).getText().toString());
                         }
