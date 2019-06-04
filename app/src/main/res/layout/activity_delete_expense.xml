@@ -32,7 +32,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,10 +40,12 @@
 
     <ListView
         android:id="@+id/expensesListView"
-        android:layout_width="413dp"
-        android:layout_height="538dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="116dp"
-        app:layout_constraintTop_toBottomOf="@+id/addExpenseBtn"
-        tools:layout_editor_absoluteX="-1dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addExpenseBtn" />
 
 </android.support.constraint.ConstraintLayout>

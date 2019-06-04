@@ -41,7 +41,7 @@ public class AddGroupMember extends AppCompatActivity {
     public FirebaseAuth mAuth;
 
 
-    private static final String TAG = "UserList";
+    private static final String TAG = "UuserList";
     private String displayName;
 
     private DatabaseReference userlistReference;

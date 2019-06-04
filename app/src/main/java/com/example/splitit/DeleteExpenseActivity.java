@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class DeleteExpenseActivity extends AppCompatActivity {
 
@@ -24,27 +25,36 @@ public class DeleteExpenseActivity extends AppCompatActivity {
     ListView expenseListView;
     ArrayList<String> expenseNames = new ArrayList<>();
     Button backBtn;
+    private Map<String, String> expenseNameMap;
+    private Map<String, Double> expenseMap;
+    private Map<String, ArrayList<String>> participantsMap;
+    private Map<String, String> userWhoPayedMap;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_expense);
 
         Intent intent = getIntent();
+
         groupKey = intent.getExtras().getString("groupKey");
 
         expenseListView = (ListView) findViewById(R.id.expensesListView);
+
         backBtn = (Button) findViewById(R.id.addExpenseBtn);
+
         DocumentReference docRef = db.collection("groups").document(groupKey);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                expenses = documentSnapshot.toObject(Group.class).getExpenses();
-                for(Expense expense : expenses){
-                    expenseNames.add(expense.getExpenseName());
+                expenseNameMap = documentSnapshot.toObject(Group.class).getExpenseNameMap();
+
+                for (Object value : expenseNameMap.values()) {
+                    expenseNames.add(value.toString());
                 }
 
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, expenseNames);

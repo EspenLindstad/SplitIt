@@ -52,6 +52,12 @@ public class NameGroupPage extends AppCompatActivity {
     private String name;
     private String userkey;
 
+    private Map<String, Integer> userMap;
+    Map<String, String> expenseNameMap = new HashMap<>();
+    Map<String, Double> expenseMap = new HashMap<>();
+    Map<String, ArrayList<String>> participantsMap = new HashMap<>();
+    Map<String, String> userWhoPayedMap = new HashMap<>();
+
     public ListView participantsView;
 
     ArrayAdapter arrayAdapter;
@@ -70,7 +76,7 @@ public class NameGroupPage extends AppCompatActivity {
 
 
         backButton = (Button) findViewById(R.id.button2);
-        doneButton = (Button) findViewById(R.id.button);
+        doneButton = (Button) findViewById(R.id.doneBtn);
 
         participantsView = (ListView) findViewById(R.id.usersList);
 
@@ -82,20 +88,28 @@ public class NameGroupPage extends AppCompatActivity {
 
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, memberlist);
         participantsView.setAdapter(arrayAdapter);
+        userMap = initializeMap(memberlist);
 
 
 
         doneButton.setOnClickListener(view -> {
-                    writeNewGroup(name, memberlist, userKeys);
-
+                    writeNewGroup(name, memberlist, userKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap);
                 });
             }
 
 
-    private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys) {
-        gName = ((TextView) findViewById(R.id.editText)).getText().toString();
+    private Map<String, Integer> initializeMap(ArrayList groupList){
+        Map<String, Integer> userMap = new HashMap<>();
+        for (int i = 0; i < groupList.size(); i++) {
+            userMap.put(groupList.get(i).toString(), i);
+        }
+        return userMap;
+    }
+
+    private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap, Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap ) {
+        //gName = ((TextView) findViewById(R.id.editText)).getText().toString();
         System.out.println("This is the groupname: " + gName);
-        Group group = new Group(gName, members, memberKeys);
+        Group group = new Group(gName, members, memberKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap);
         db.collection("groups")
                 .add(group)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -105,7 +119,7 @@ public class NameGroupPage extends AppCompatActivity {
                         System.out.println("Dette er nøkkelen i writenewgroup: " + uniqueKey);
 
                         for (String member : memberKeys) {
-                            addUserToSettlement(uniqueKey, member);
+                            addUserToSettlement(uniqueKey, member, ((TextView) findViewById(R.id.editText)).getText().toString());
                         }
 
                         Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
@@ -128,28 +142,38 @@ public class NameGroupPage extends AppCompatActivity {
 
     }
 
-    public void addUserToSettlement(String groupKey, String userKey) {
+
+    public void addUserToSettlement(String groupKey, String userKey, String gname) {
 
         DocumentReference docRef = db.collection("users").document(userKey);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                System.out.println("Class of usersting: " + documentSnapshot.get("usersSettlements"));
+                //System.out.println("Class of usersting: " + documentSnapshot.get("usersSettlements").getClass());
+
 
                 if (documentSnapshot.get("usersSettlements") == null) {
                     Map<String, ArrayList<String>> settlementMap = new HashMap<>();
                     ArrayList<String> partOf = new ArrayList<>();
+                    partOf.add(gname);
+                    partOf.add(groupKey);
                     settlementMap.put("usersSettlements", partOf);
                     db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
                 }
+                else {
+                    //Funker ikke når brukeren er ny
+                    Map<String, ArrayList<String>> settlementMap = new HashMap<>();
+                    ArrayList<String> memberOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
+                    System.out.println("Test: " + memberOf.isEmpty());
+                    memberOf.add(gname);
+                    memberOf.add(groupKey);
+                    settlementMap.put("usersSettlements", memberOf);
+                    db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
 
-                Map<String, ArrayList<String>> settlementMap = new HashMap<>();
-                ArrayList<String> memberOf = new ArrayList<>();
-                memberOf.add(groupKey);
-                settlementMap.put("usersSettlements", memberOf);
-                db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
+                    System.out.println("Ting funker ja");
+                }
 
-                System.out.println("Ting funker ja");
+
 
             }
         });

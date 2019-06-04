@@ -13,22 +13,23 @@ public class SplitAlgorithm {
     private ArrayList<String> sums;
 
 
-    public SplitAlgorithm(ArrayList<String> debitors, ArrayList<String> creditos, ArrayList<String> sums){
-        this.debitors = debitors;
-        this.creditors = creditors;
-        this.sums = sums;
+    public SplitAlgorithm(){
+        this.debitors = new ArrayList<>();
+        this.creditors = new ArrayList<>();
+        this.sums = new ArrayList<>();
     }
+
 
     public void addToDebitors(String debit) {
         debitors.add(debit);
     }
 
     public void addToCreditors(String credit) {
-        debitors.add(credit);
+        creditors.add(credit);
     }
 
     public void addToSums(String sum) {
-        debitors.add(sum);
+        sums.add(sum);
     }
 
     public ArrayList<String> getDebitors() {
@@ -122,8 +123,9 @@ public class SplitAlgorithm {
     // pay person j, this function
     // finds and prints the minimum
     // cash flow to settle all debts.
-    private void minCashFlow(int graph[][], int N)
+    public void minCashFlow(double graph[][], int N)
     {
+        System.out.println("Startet split algorithm");
         // Create an array amount[],
         // initialize all value in it as 0.
         int amount[]=new int[N];
@@ -147,7 +149,7 @@ public class SplitAlgorithm {
     {
         // graph[i][j] indicates the amount
         // that person i needs to pay person j
-        int graph[][] = { {0, 1000, 2000},
+        double graph[][] = { {0, 1000, 2000},
                         {0, 0, 5000},
                         {0, 0, 0},};
 
