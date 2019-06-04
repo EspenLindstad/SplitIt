@@ -276,19 +276,22 @@ public class Group {
 
     }
 
-    public void removeExpense(Expense expense){
+    public ArrayList<Double> removeExpense(ArrayList<Double> settlementArr,ArrayList<String> members, String user_who_payed, double expense){
 
         double[][] settlement = arrayToMat(settlementArr);
 
-        ArrayList<String> members = expense.getExpenseMembers();
-        String user_who_payed = expense.getMemberPayed();
         int user_who_payed_index = userMap.get(user_who_payed);
         for(String member : members){
             int memberIndex = userMap.get(member);
-            settlement[memberIndex][user_who_payed_index] = settlement[memberIndex][user_who_payed_index] - expense.getCostPerPerson();
+            settlement[memberIndex][user_who_payed_index] = settlement[memberIndex][user_who_payed_index] - getCostPerPerson(expense, members);
         }
         settlementArr = matToArray(settlement);
-        expenses.remove(expense);
+
+        return settlementArr;
+    }
+
+    public double getCostPerPerson(double expense, ArrayList<String> members){
+        return expense/(members.size()+1); //plus one to account for the person who payed
     }
 
     public String whoShouldPayNext(ArrayList<Double> settlementArr, Map<String, Integer> userMap){
