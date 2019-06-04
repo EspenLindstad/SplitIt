@@ -52,6 +52,12 @@ public class NameGroupPage extends AppCompatActivity {
     private String name;
     private String userkey;
 
+    private Map<String, Integer> userMap;
+    Map<String, String> expenseNameMap = new HashMap<>();
+    Map<String, Double> expenseMap = new HashMap<>();
+    Map<String, ArrayList<String>> participantsMap = new HashMap<>();
+    Map<String, String> userWhoPayedMap = new HashMap<>();
+
     public ListView participantsView;
 
     ArrayAdapter arrayAdapter;
@@ -82,20 +88,28 @@ public class NameGroupPage extends AppCompatActivity {
 
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, memberlist);
         participantsView.setAdapter(arrayAdapter);
+        userMap = initializeMap(memberlist);
 
 
 
         doneButton.setOnClickListener(view -> {
-                    writeNewGroup(name, memberlist, userKeys);
-
+                    writeNewGroup(name, memberlist, userKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap);
                 });
             }
 
 
-    private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys) {
+    private Map<String, Integer> initializeMap(ArrayList groupList){
+        Map<String, Integer> userMap = new HashMap<>();
+        for (int i = 0; i < groupList.size(); i++) {
+            userMap.put(groupList.get(i).toString(), i);
+        }
+        return userMap;
+    }
+
+    private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap, Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap ) {
         //gName = ((TextView) findViewById(R.id.editText)).getText().toString();
         System.out.println("This is the groupname: " + gName);
-        Group group = new Group(gName, members, memberKeys);
+        Group group = new Group(gName, members, memberKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap);
         db.collection("groups")
                 .add(group)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -127,6 +141,7 @@ public class NameGroupPage extends AppCompatActivity {
 
 
     }
+
 
     public void addUserToSettlement(String groupKey, String userKey, String gname) {
 

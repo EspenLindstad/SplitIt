@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -19,6 +20,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SettlementHomepage extends AppCompatActivity {
 
@@ -33,6 +36,8 @@ public class SettlementHomepage extends AppCompatActivity {
     private Button addBtn;
     private Button goToSettlementBtn;
     private Button deleteBtn;
+    private TextView payNextPerson;
+    Map<String, Integer> userMap = new HashMap<>();
 
     ArrayAdapter arrayAdapter;
 
@@ -52,6 +57,7 @@ public class SettlementHomepage extends AppCompatActivity {
 
         addBtn = (Button) findViewById(R.id.addBtn);
         deleteBtn = (Button) findViewById(R.id.deleteBtn);
+        payNextPerson = (TextView) findViewById(R.id.userTextView);
 
         goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
 
@@ -73,13 +79,26 @@ public class SettlementHomepage extends AppCompatActivity {
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-
                 groupMembers = (ArrayList<String>) documentSnapshot.get("groupList");
-
                 System.out.println("These are my mfuckin gmember: " + groupMembers);
-
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
                 userListView.setAdapter(arrayAdapter);
+
+                ArrayList<Double> settlementArr = documentSnapshot.toObject(Group.class).getSettlementArr();
+
+                userMap = documentSnapshot.toObject(Group.class).getUserMap();
+
+                if(settlementArr.isEmpty()){
+                    for(int i = 0; i < userMap.size()*userMap.size(); i++){
+                        settlementArr.add(0.0);
+                    }
+                }
+
+
+                String payNext = documentSnapshot.toObject(Group.class).whoShouldPayNext(settlementArr, userMap);
+
+                payNextPerson.setText(payNext);
+
             }
         });
 

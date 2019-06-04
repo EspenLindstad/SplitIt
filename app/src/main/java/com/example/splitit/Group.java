@@ -27,25 +27,27 @@ public class Group {
 
     private ArrayList<Double> settlementArr = new ArrayList<Double>();
 
-    private Double[][] settlement;
+    private double[][] settlement;
+
+    Map<String, String> expenseNameMap = new HashMap<>();
+    Map<String, Double> expenseMap = new HashMap<>();
+    Map<String, ArrayList<String>> participantsMap = new HashMap<>();
+    Map<String, String> userWhoPayedMap = new HashMap<>();
 
 
     int members;
 
-    public Group(String name, ArrayList groupList, ArrayList groupKeys) {
+    public Group(String name, ArrayList groupList, ArrayList groupKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap,Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap) {
         this.name = name;
         this.groupList = groupList;
         this.groupKeys = groupKeys;
         this.members = groupList.size();
-
-        settlement = new Double[groupList.size()][groupList.size()];
-
-        for (int i = 0; i < groupList.size(); i++) {
-            userMap.put(groupList.get(i).toString(), i);
-            for(int j = 0; j < groupList.size(); j++) {
-                settlementArr.add(0.0);
-            }
-        }
+        settlement = new double[groupList.size()][groupList.size()];
+        this.userMap = userMap;
+        this.expenseNameMap = expenseNameMap;
+        this.expenseMap = expenseMap;
+        this.participantsMap = participantsMap;
+        this.userWhoPayedMap = userWhoPayedMap;
     }
 
     public Group() {
@@ -76,6 +78,38 @@ public class Group {
     }
 
 
+    public Map<String, String> getExpenseNameMap() {
+        return expenseNameMap;
+    }
+
+    public void setExpenseNameMap(Map<String, String> expenseNameMap) {
+        this.expenseNameMap = expenseNameMap;
+    }
+
+    public Map<String, Double> getExpenseMap() {
+        return expenseMap;
+    }
+
+    public void setExpenseMap(Map<String, Double> expenseMap) {
+        this.expenseMap = expenseMap;
+    }
+
+    public Map<String, ArrayList<String>> getParticipantsMap() {
+        return participantsMap;
+    }
+
+    public void setParticipantsMap(Map<String, ArrayList<String>> participantsMap) {
+        this.participantsMap = participantsMap;
+    }
+
+    public Map<String, String> getUserWhoPayedMap() {
+        return userWhoPayedMap;
+    }
+
+
+    public void setUserWhoPayedMap(Map<String, String> userWhoPayedMap) {
+        this.userWhoPayedMap = userWhoPayedMap;
+    }
 
     public double[][] arrayToMat(ArrayList<Double> settlementArr){
         int size = settlementArr.size()/groupList.size();
@@ -145,8 +179,6 @@ public class Group {
 
         double[][] settlement = arrayToMat(settlementArr);
 
-
-
         for (int i = 0; i < expenses.size(); i++) {
 
             ArrayList<String> expenseMembers = expenses.get(i).getExpenseMembers();
@@ -210,9 +242,9 @@ public class Group {
 
     }
 
-    public void addExpense(double expense, ArrayList<String> participants, String user_who_payed, String name) {
+    public ArrayList<Double> addExpense(double expense, ArrayList<String> participants, String user_who_payed, String name, ArrayList<Double> prevSettlement, Map<String, Integer> userMap) {
 
-        double [][] settlement = arrayToMat(settlementArr);
+        settlement = arrayToMat(prevSettlement);
 
         Expense expenseGroup = new Expense(participants, user_who_payed, expense, name);
 
@@ -221,7 +253,8 @@ public class Group {
         double dividedExpense = expenseGroup.getCostPerPerson();
 
         System.out.println("This is the usermap: " + getUserMap());
-        int user_who_payed_index = getUserMap().get(user_who_payed);
+
+        int user_who_payed_index = userMap.get(user_who_payed);
 
         if (participants.size() == groupList.size()) { // hvis det skal deles på alle
             for (int i = 0; i < settlement.length; i++) {
@@ -234,8 +267,12 @@ public class Group {
             }
         }
 
+        settlementArr = matToArray(settlement);
 
-        this.settlementArr = matToArray(settlement);
+        System.out.println("settlement array in addExpense");
+        System.out.println(settlementArr);
+
+        return settlementArr;
 
     }
 
@@ -254,18 +291,30 @@ public class Group {
         expenses.remove(expense);
     }
 
-    public String whoShouldPayNext(){
+    public String whoShouldPayNext(ArrayList<Double> settlementArr, Map<String, Integer> userMap){
+
+        System.out.println("USERMAP INPUT TO WHO SHOULD PAY NEXT");
+        System.out.println(userMap);
+        System.out.println("THIS IS THE INPUT SETTLEMENT MAT");
+
         double[][] settlement = arrayToMat(settlementArr);
+
+        for (double[] row : settlement) {
+
+            // converting each row as string
+            // and then printing in a separate line
+            System.out.println(Arrays.toString(row));
+        }
+
 
         Map<String, Integer> debtMap = new HashMap<>(); // <user, total debt>
 
         for (Map.Entry<String, Integer> entry : userMap.entrySet()) {
             int sumDebt = 0;
-            for(int i = 0; i < settlement.length; i++) {
-                sumDebt += settlement[entry.getValue()][i];
-            }
+            //for(int i = 0; i < settlement.length; i++) {
+                sumDebt += settlement[entry.getValue()][entry.getValue()];
+            //}
             debtMap.put(entry.getKey(), sumDebt);
-
         }
 
 
@@ -287,13 +336,14 @@ public class Group {
             temp.put(aa.getKey(), aa.getValue());
         }
 
+        System.out.println("THIS IS THE STORTED USERMAP");
+        System.out.println(temp);
 
         return temp.keySet().toArray()[0].toString(); //get the first person in the list
-
     }
 
     public static void main(String[] args) {
-
+/*
 
         ArrayList<String> groupList = new ArrayList<>();
         groupList.add("p1");
@@ -302,17 +352,6 @@ public class Group {
         groupList.add("p4");
         groupList.add("p5");
 
-        ArrayList<String> groupKeys = new ArrayList<>();
-        groupKeys.add("p1");
-        groupKeys.add("p2");
-        groupKeys.add("p5");
-
-        Group group = new Group("test", groupList, groupKeys);
-
-        ArrayList<String> expenseMembers1 = new ArrayList<>();
-        expenseMembers1.add("p1");
-        expenseMembers1.add("p2");
-        expenseMembers1.add("p5");
 
 
         ArrayList<Double> sa;
@@ -337,24 +376,8 @@ public class Group {
         System.out.println("HER");
         ArrayList<Double> arry = group.matToArray(s);
         System.out.println(arry);
-
+*/
         /////////////////////////
-
-        group.addExpense(100, expenseMembers1, "p4", "hei");
-
-        sa = group.getSettlementArr();
-        System.out.println("sa");
-        System.out.println(sa);
-
-        System.out.println("group.arrayToMat(sa)");
-
-        s = group.arrayToMat(sa);
-        for (double[] row : s) {
-
-            // converting each row as string
-            // and then printing in a separate line
-            System.out.println(Arrays.toString(row));
-        }
 
 /*
         group.addExpense(124, expenseMembers2, "p2", "skjer");

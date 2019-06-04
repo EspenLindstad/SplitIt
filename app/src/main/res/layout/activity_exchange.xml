@@ -10,7 +10,7 @@
 
     <EditText
         android:id="@+id/moneyText"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -40,13 +40,13 @@
 
     <Button
         android:id="@+id/addExpenseBtn"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="Add participants"
+        android:text="Add Expense"
         android:textAllCaps="false"
         app:layout_constraintBottom_toTopOf="@+id/userListView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,15 +56,15 @@
 
     <EditText
         android:id="@+id/settlementName"
-        android:layout_width="340dp"
+        android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="80dp"
         android:layout_marginEnd="55dp"
         android:layout_marginBottom="8dp"
         android:ems="10"
+        android:hint="Expense Description"
         android:inputType="textPersonName"
-        android:text="Expense Description e.g. Uber, Dinner"
         app:layout_constraintBottom_toTopOf="@+id/moneyText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -84,5 +84,20 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addExpenseBtn" />
+
+    <Button
+        android:id="@+id/addAllBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="57dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="24dp"
+        android:text="Add all"
+        app:layout_constraintBottom_toTopOf="@+id/userListView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.108"
+        app:layout_constraintStart_toEndOf="@+id/addExpenseBtn"
+        app:layout_constraintTop_toBottomOf="@+id/fromSpinner" />
 
 </android.support.constraint.ConstraintLayout>

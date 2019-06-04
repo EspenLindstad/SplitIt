@@ -12,17 +12,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import org.json.JSONObject;
@@ -37,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class ExchangeActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -47,27 +45,34 @@ public class ExchangeActivity extends AppCompatActivity {
     ListView userListView;
     String baseCurrency = "USD";
     private ArrayList<String> expenseMembers = new ArrayList<>();
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private String currentUser;
     String expenseName;
 
-    private FirebaseUser user;
-    public FirebaseAuth Auth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exchange);
 
-        user = Auth.getCurrentUser();
-
         final Button addExpenseBtn = (Button) findViewById(R.id.addExpenseBtn);
         final TextView moneyText = (TextView) findViewById(R.id.moneyText);
         final Spinner fromSpinner = (Spinner) findViewById(R.id.fromSpinner);
-        expenseName = ((EditText) findViewById(R.id.settlementName)).getText().toString();
+        final Button addAllBtn = (Button) findViewById(R.id.addAllBtn);
+        final EditText name = ((EditText) findViewById(R.id.settlementName));
+
+
 
         userListView = (ListView) findViewById(R.id.userListView);
 
         //final Spinner toSpinner = (Spinner) findViewById(R.id.toSpinner);
         resultVal = 0.0;
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        String email = user.getEmail();
+        currentUser = usernameFromEmail(email);
 
 
         Intent intent = getIntent();
@@ -79,10 +84,18 @@ public class ExchangeActivity extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 groupMembers = documentSnapshot.toObject(Group.class).getGroupList();
                 //set base currency må komme før her
-                System.out.println("These are my mfuckin gmember: " + groupMembers);
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
-                userListView.setAdapter(arrayAdapter);
 
+                addAllBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        expenseMembers = groupMembers;
+                        Toast.makeText(getApplicationContext(),"All members will be added to expense",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                userListView.setAdapter(arrayAdapter);
                 userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -90,11 +103,9 @@ public class ExchangeActivity extends AppCompatActivity {
                         if (!expenseMembers.contains(groupMembers.get(position))) {
                             expenseMembers.add(groupMembers.get(position));
 
-
                         }
                     }
                 });
-
 
             }
         });
@@ -170,36 +181,17 @@ public class ExchangeActivity extends AppCompatActivity {
                 try {
                     thread.join();
 
-                    String memberPayed = usernameFromEmail(user.getEmail());
-                    System.out.println("this is the memberpayed: " + memberPayed);
-
-
                     docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-
-                            //vi må intizialisere en tom array i starten slik at vi kan hente den ut, adde settlement, og sende den inn igjen.
-
-                            //C: First add the expense locally
+                            expenseName  = name.getText().toString();
 
                             Group group = documentSnapshot.toObject(Group.class);
 
+                            Map<String, Integer> userMap = documentSnapshot.toObject(Group.class).getUserMap();
 
-                            Map<String, Integer> temporaryMap = new HashMap<>();
-                            for(int i = 0;  i< group.getGroupList().size(); i++){
-                                temporaryMap.put(group.getGroupList().get(i).toString(), i);
-                            }
-
-                            group.setUserMap(temporaryMap);
-
-                            System.out.println("group.getUserMap()");
-
-                            System.out.println(group.getUserMap());
-
-                            System.out.println("settlementArr");
-
-                            ArrayList<Double> settlementArr = group.getSettlementArr();
+                            ArrayList<Double> settlementArr = documentSnapshot.toObject(Group.class).getSettlementArr();
 
                             if(settlementArr.isEmpty()){
                                 for(int i = 0; i < group.getUserMap().size()*group.getUserMap().size(); i++){
@@ -207,33 +199,55 @@ public class ExchangeActivity extends AppCompatActivity {
                                 }
                             }
 
-                            group.addExpense(resultVal, expenseMembers, memberPayed, expenseName);
+                            settlementArr = group.addExpense(resultVal, expenseMembers, currentUser, expenseName, settlementArr, userMap); // current user = member payed
 
-                            System.out.println(group.getSettlementArr());
-
-                            settlementArr = group.getSettlementArr();
-
-                            //documentSnapshot.toObject(Group.class).addExpense(resultVal ,expenseMembers, memberPayed, expenseName);
-
-
-                            /*ArrayList<Double> settlement = new ArrayList<>();
-                            settlement.add(1.0);
-                            settlement.add(2.0);
-                            settlement.add(3.0);*/
 
                             Map<String, Object> settlementMap = new HashMap<String, Object>();
-                            settlementMap.put("settlement", settlementArr);
+                            settlementMap.put("settlementArr", settlementArr);
                             db.collection("groups").document(groupKey).set(settlementMap, SetOptions.merge());
-/*
-                            Map<String, Object> expenseMap = new HashMap<>();
-                            //expenseMap.put("expenseValue", resultVal);
-                            //expenseMap.put("groupMembers", groupMembers);
-                            //expenseMap.put("memberWhoPayed", memberPayed);
-                   */       //db.collection("groups").document(groupKey).set(expenseMap, SetOptions.merge());
 
-                            //documentSnapshot.toObject(Group.class).addExpense(5 ,expenseMembers, memberPayed);
-                            //String p = documentSnapshot.toObject(Group.class).whoShouldPayNext();
-                            //System.out.println(p);
+
+                            Toast.makeText(getApplicationContext(),"Expense added",
+                                    Toast.LENGTH_SHORT).show();
+
+                            //Now: Adding the expenses into firebase.
+
+                            String uniqueExpenseID = UUID.randomUUID().toString();
+                            System.out.println(uniqueExpenseID);
+
+                            Map<String, String> expenseNameMapTemp;
+                            Map<String, Double> expenseMapTemp;
+                            Map<String, ArrayList<String>> participantsMapTemp;
+                            Map<String, String> userWhoPayedMapTemp;
+
+                            expenseNameMapTemp = documentSnapshot.toObject(Group.class).getExpenseNameMap();
+                            expenseMapTemp = documentSnapshot.toObject(Group.class).getExpenseMap();
+                            participantsMapTemp = documentSnapshot.toObject(Group.class).getParticipantsMap();
+                            userWhoPayedMapTemp = documentSnapshot.toObject(Group.class).getUserWhoPayedMap();
+
+                            expenseNameMapTemp.put(uniqueExpenseID, expenseName);
+                            expenseMapTemp.put(uniqueExpenseID, resultVal);
+                            participantsMapTemp.put(uniqueExpenseID, groupMembers);
+                            userWhoPayedMapTemp.put(uniqueExpenseID, currentUser);
+
+                            Map<String, Object> expenseNameMap = new HashMap<String, Object>();
+                            expenseNameMap.put("expenseNameMap", expenseNameMapTemp);
+
+                            Map<String, Object> expenseMap = new HashMap<String, Object>();
+                            expenseMap.put("expenseMap", expenseMapTemp);
+
+                            Map<String, Object> participantsMap = new HashMap<String, Object>();
+                            participantsMap.put("participantsMap", participantsMapTemp);
+
+                            Map<String, Object> userWhoPayedMap = new HashMap<String, Object>();
+                            userWhoPayedMap.put("userWhoPayedMap", userWhoPayedMapTemp);
+
+
+                            db.collection("groups").document(groupKey).set(expenseNameMap, SetOptions.merge());
+                            db.collection("groups").document(groupKey).set(expenseMap, SetOptions.merge());
+                            db.collection("groups").document(groupKey).set(participantsMap, SetOptions.merge());
+                            db.collection("groups").document(groupKey).set(userWhoPayedMap, SetOptions.merge());
+
 
                             Intent newIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
                             newIntent.putExtra("groupKey", groupKey);
@@ -250,7 +264,6 @@ public class ExchangeActivity extends AppCompatActivity {
 
 
         });
-
 
     }
 

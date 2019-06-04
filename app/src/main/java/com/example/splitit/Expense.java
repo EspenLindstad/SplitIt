@@ -1,6 +1,8 @@
 package com.example.splitit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Expense {
 
@@ -8,6 +10,8 @@ public class Expense {
     private String memberPayed; //who added the expense
     private Double expense;
     String expenseName;
+
+    Map<String, Map<String, Integer>> map = new HashMap<>();
 
     public Expense(ArrayList<String> expenseMembers, String memberPayed, Double expense, String expenseName){
         this.expenseMembers = expenseMembers;
