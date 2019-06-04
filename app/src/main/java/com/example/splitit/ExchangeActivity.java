@@ -43,12 +43,16 @@ public class ExchangeActivity extends AppCompatActivity {
     private ArrayList<String> groupMembers;
     ArrayAdapter arrayAdapter;
     ListView userListView;
-    String baseCurrency = "USD";
+    String baseCurrency;
     private ArrayList<String> expenseMembers = new ArrayList<>();
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private String currentUser;
     String expenseName;
+    Map<String, String> expenseNameMapTemp;
+    Map<String, Double> expenseMapTemp;
+    Map<String, ArrayList<String>> participantsMapTemp;
+    Map<String, String> userWhoPayedMapTemp;
 
 
     @Override
@@ -61,8 +65,6 @@ public class ExchangeActivity extends AppCompatActivity {
         final Spinner fromSpinner = (Spinner) findViewById(R.id.fromSpinner);
         final Button addAllBtn = (Button) findViewById(R.id.addAllBtn);
         final EditText name = ((EditText) findViewById(R.id.settlementName));
-
-
 
         userListView = (ListView) findViewById(R.id.userListView);
 
@@ -83,6 +85,7 @@ public class ExchangeActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 groupMembers = documentSnapshot.toObject(Group.class).getGroupList();
+                baseCurrency =  documentSnapshot.toObject(Group.class).getBaseCurrency();
                 //set base currency må komme før her
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
 
@@ -214,11 +217,6 @@ public class ExchangeActivity extends AppCompatActivity {
 
                             String uniqueExpenseID = UUID.randomUUID().toString();
                             System.out.println(uniqueExpenseID);
-
-                            Map<String, String> expenseNameMapTemp;
-                            Map<String, Double> expenseMapTemp;
-                            Map<String, ArrayList<String>> participantsMapTemp;
-                            Map<String, String> userWhoPayedMapTemp;
 
                             expenseNameMapTemp = documentSnapshot.toObject(Group.class).getExpenseNameMap();
                             expenseMapTemp = documentSnapshot.toObject(Group.class).getExpenseMap();

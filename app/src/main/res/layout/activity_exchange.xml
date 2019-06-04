@@ -10,9 +10,8 @@
 
     <EditText
         android:id="@+id/moneyText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
@@ -36,7 +35,8 @@
         app:layout_constraintBottom_toTopOf="@+id/userListView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/moneyText"
-        app:layout_constraintTop_toBottomOf="@+id/settlementName" />
+        app:layout_constraintTop_toBottomOf="@+id/settlementName"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/addExpenseBtn"

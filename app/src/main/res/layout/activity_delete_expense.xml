@@ -11,18 +11,20 @@
 
     <Button
         android:id="@+id/addExpenseBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="19dp"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="304dp"
-        android:layout_marginBottom="116dp"
+        android:layout_width="113dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="268dp"
+        android:layout_marginBottom="8dp"
         android:text="Back "
         android:textAllCaps="false"
-        app:layout_constraintBottom_toTopOf="@+id/expensesListView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ListView
         android:id="@+id/userListView"
@@ -40,9 +42,9 @@
 
     <ListView
         android:id="@+id/expensesListView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginTop="116dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
