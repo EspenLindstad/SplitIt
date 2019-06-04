@@ -37,6 +37,7 @@ public class SettlementHomepage extends AppCompatActivity {
     private Button goToSettlementBtn;
     private Button deleteBtn;
     private TextView payNextPerson;
+    private Button plusBtn;
     Map<String, Integer> userMap = new HashMap<>();
 
     ArrayAdapter arrayAdapter;
@@ -57,9 +58,20 @@ public class SettlementHomepage extends AppCompatActivity {
 
         addBtn = (Button) findViewById(R.id.addBtn);
         deleteBtn = (Button) findViewById(R.id.deleteBtn);
+        plusBtn = (Button) findViewById(R.id.plusBtn);
         payNextPerson = (TextView) findViewById(R.id.userTextView);
 
         goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
+
+        plusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent addIntent = new Intent(getApplicationContext(), AddNewGroupMember.class);
+                addIntent.putStringArrayListExtra("groupMembers", groupMembers);
+                addIntent.putExtra("groupKey", groupKey);
+                startActivity(addIntent);
+            }
+        });
 
         goToSettlementBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:name=".SplitIt"
-    android:screenOrientation="portrait"
-    package="com.example.splitit">
+    package="com.example.splitit"
+    android:screenOrientation="portrait">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DeleteExpenseActivity"></activity>
+        <activity android:name=".AddNewGroupMember"></activity>
+        <activity android:name=".DeleteExpenseActivity" />
         <activity android:name=".SettlementHomepage" />
         <activity android:name=".ExchangeActivity" />
         <activity android:name=".NameGroupPage" />
