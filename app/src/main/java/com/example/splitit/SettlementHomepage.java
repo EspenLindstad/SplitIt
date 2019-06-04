@@ -49,9 +49,12 @@ public class SettlementHomepage extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
+        System.out.println("Kjorer vi her etter add member?");
+
         Intent intent = getIntent();
 
         groupKey = intent.getExtras().getString("groupKey");
+        groupMembers = intent.getStringArrayListExtra("groupmembers");
 
         System.out.println("this is the groupKey: " + groupKey);
 
@@ -92,7 +95,9 @@ public class SettlementHomepage extends AppCompatActivity {
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                groupMembers = (ArrayList<String>) documentSnapshot.get("groupList");
+                if (groupMembers == null) {
+                    groupMembers = (ArrayList<String>) documentSnapshot.get("groupList");
+                }
                 System.out.println("These are my mfuckin gmember: " + groupMembers);
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
                 userListView.setAdapter(arrayAdapter);

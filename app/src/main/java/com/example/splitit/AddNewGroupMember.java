@@ -78,17 +78,6 @@ public class AddNewGroupMember extends AppCompatActivity {
         memberKeys = intent.getExtras().getStringArrayList("groupkeys");
         System.out.println("This is the memberlist from intent: " + memberlist);
 
-        doneBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateGroup(newMembersList, newMembersKeys);
-
-                Intent backIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
-                backIntent.putExtra("groupKey", groupKey);
-                startActivity(backIntent);
-
-            }
-        });
 
         readData(new MyCallback() {
             @Override
@@ -138,6 +127,19 @@ public class AddNewGroupMember extends AppCompatActivity {
 
                 }
                 changeClickability();
+
+            }
+        });
+
+        doneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateGroup(newMembersList, newMembersKeys);
+
+                Intent doneIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
+                doneIntent.putExtra("groupKey", groupKey);
+                doneIntent.putStringArrayListExtra("groupmembers", memberlist);
+                startActivity(doneIntent);
 
             }
         });
@@ -210,6 +212,7 @@ public class AddNewGroupMember extends AppCompatActivity {
                 db.collection("groups").document(groupKey).update("settlementArr", group.getSettlementArr());
 
                 System.out.println("This is the grouplist after updateGroup: " + group.getGroupList());
+
             }
         });
     }
