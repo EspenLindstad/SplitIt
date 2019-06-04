@@ -27,6 +27,7 @@ public class ViewExpense extends AppCompatActivity {
     private String userWhoPayed;
     private String expense;
     private String currentUser;
+    private String uniqueKey;
     private TextView ExpenseNameTV;
     private TextView UserWhoPayedTV;
     private TextView ExpenseTV;
@@ -48,12 +49,15 @@ public class ViewExpense extends AppCompatActivity {
         expense = viewExpenseIntent.getExtras().getString("expense");
         currentUser = viewExpenseIntent.getExtras().getString("currentUser");
         participants =  viewExpenseIntent.getExtras().getStringArrayList("participants");
+        uniqueKey = viewExpenseIntent.getExtras().getString("uniqueExpenseKey");
 
-        System.out.println("HER");
-        System.out.println(expenseName);
-        System.out.println(userWhoPayed);
-        System.out.println(expense);
-        System.out.println(currentUser);
+        System.out.println("VIEWEXPENSE");
+        System.out.println("expenseName" + expenseName);
+        System.out.println("userWhoPayed"+ userWhoPayed);
+        System.out.println("expense" + expense);
+        System.out.println("currentUser" + currentUser);
+        System.out.println("uniqueKey" + uniqueKey);
+
         /*
         UserWhoPayedTV.setText(userWhoPayed);
         ExpenseNameTV.setText(expenseName);
@@ -84,17 +88,66 @@ public class ViewExpense extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(),"Ok det funker",
                                     Toast.LENGTH_SHORT).show();
 
-                            Group group = documentSnapshot.toObject(Group.class);
-                            Map<String, Integer> userMap = documentSnapshot.toObject(Group.class).getUserMap();
+                            Map<String, String> userWhoPayedMapTemp = documentSnapshot.toObject(Group.class).getUserWhoPayedMap();
+                            Map<String, Double> expenseMapTemp = documentSnapshot.toObject(Group.class).getExpenseMap();
+                            Map<String, ArrayList<String>> participantsMapTemp = documentSnapshot.toObject(Group.class).getParticipantsMap();
+                            Map<String, String> expenseNameMapTemp = documentSnapshot.toObject(Group.class).getExpenseNameMap();
+
+                            System.out.println("MAPS BEFORE ELEMENT IS REMOVED");
+                            System.out.println("userWhoPayedMap");
+                            System.out.println(userWhoPayedMapTemp);
+                            System.out.println("expenseMap");
+                            System.out.println(expenseMapTemp);
+                            System.out.println("expenseNameMap");
+                            System.out.println(expenseNameMapTemp);
+                            System.out.println("participantsMap");
+                            System.out.println(participantsMapTemp);
+
+                            expenseMapTemp.remove(uniqueKey);
+                            participantsMapTemp.remove(uniqueKey);
+                            expenseNameMapTemp.remove(uniqueKey);
+                            userWhoPayedMapTemp.remove(uniqueKey);
+
+
+                            System.out.println("MAPS AFTER ELEMENT IS REMOVED");
+                            System.out.println("userWhoPayedMap");
+                            System.out.println(userWhoPayedMapTemp);
+                            System.out.println("expenseMap");
+                            System.out.println(expenseMapTemp);
+                            System.out.println("expenseNameMap");
+                            System.out.println(expenseNameMapTemp);
+                            System.out.println("participantsMap");
+                            System.out.println(participantsMapTemp);
+
+
+                            Map<String, Object> expenseNameMap = new HashMap<String, Object>();
+                            expenseNameMap.put("expenseNameMap", expenseNameMapTemp);
+
+                            Map<String, Object> expenseMap = new HashMap<String, Object>();
+                            expenseMap.put("expenseMap", expenseMapTemp);
+
+                            Map<String, Object> participantsMap = new HashMap<String, Object>();
+                            participantsMap.put("participantsMap", participantsMapTemp);
+
+                            Map<String, Object> userWhoPayedMap = new HashMap<String, Object>();
+                            userWhoPayedMap.put("userWhoPayedMap", userWhoPayedMapTemp);
+
+                            db.collection("groups").document(groupKey).update(expenseNameMap);
+                            db.collection("groups").document(groupKey).update(expenseMap);
+                            db.collection("groups").document(groupKey).update(participantsMap);
+                            db.collection("groups").document(groupKey).update(userWhoPayedMap);
+
+
+
                             ArrayList<Double> settlementArr = documentSnapshot.toObject(Group.class).getSettlementArr();
-
                             settlementArr =documentSnapshot.toObject(Group.class).removeExpense(settlementArr, participants, userWhoPayed, Double.parseDouble(expense));
-
                             Map<String, Object> settlementMap = new HashMap<String, Object>();
                             settlementMap.put("settlementArr", settlementArr);
                             db.collection("groups").document(groupKey).set(settlementMap, SetOptions.merge());
 
-
+                            Intent backToDeleteExpenseActivity = new Intent(getApplicationContext(), DeleteExpenseActivity.class);
+                            backToDeleteExpenseActivity.putExtra("groupKey", groupKey);
+                            startActivity(backToDeleteExpenseActivity);
 
 
                         }

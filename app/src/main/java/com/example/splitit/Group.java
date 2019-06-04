@@ -34,10 +34,9 @@ public class Group {
     Map<String, ArrayList<String>> participantsMap = new HashMap<>();
     Map<String, String> userWhoPayedMap = new HashMap<>();
 
-
     int members;
 
-    public Group(String name, ArrayList groupList, ArrayList groupKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap,Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap) {
+    public Group(String name, ArrayList groupList, ArrayList groupKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap,Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap, String baseCurrency) {
         this.name = name;
         this.groupList = groupList;
         this.groupKeys = groupKeys;
@@ -48,6 +47,7 @@ public class Group {
         this.expenseMap = expenseMap;
         this.participantsMap = participantsMap;
         this.userWhoPayedMap = userWhoPayedMap;
+        this.baseCurrency = baseCurrency;
     }
 
     public Group() {
@@ -155,16 +155,12 @@ public class Group {
         return settlementArr;
     }
 
-    public void addGroupMember(String user) {
+    public ArrayList<Double> addGroupMember(ArrayList<Double> settlementArr) {
 
         //List<String> groupList = new ArrayList<>();
         double[][] settlement = arrayToMat(settlementArr);
 
-        groupList.add(user);
-        userMap.put(user, members);
-        members++;
-
-        double[][] temp = new double[groupList.size() + 1][groupList.size() + 1];
+        double[][] temp = new double[settlement.length + 1][settlement.length + 1];
 
         for (int i = 0; i < settlement.length; i++) {
             for (int j = 0; j < settlement.length; j++) {
@@ -172,7 +168,9 @@ public class Group {
             }
         }
 
-        this.settlementArr = matToArray(temp);
+        settlementArr = matToArray(temp);
+
+        return settlementArr;
     }
 
     public void deleteGroupMember(String user) {

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,9 @@ public class NameGroupPage extends AppCompatActivity {
     private Button backButton;
     private Button doneButton;
 
+    private String baseCurrency;
+
+
     private String uniqueKey;
     private String groupKey;
     private String name;
@@ -80,6 +84,8 @@ public class NameGroupPage extends AppCompatActivity {
 
         participantsView = (ListView) findViewById(R.id.usersList);
 
+        final Spinner fromSpinner = (Spinner) findViewById(R.id.baseCurrencySpinner);
+
 
         Intent intent = getIntent();
 
@@ -93,7 +99,10 @@ public class NameGroupPage extends AppCompatActivity {
 
 
         doneButton.setOnClickListener(view -> {
-                    writeNewGroup(name, memberlist, userKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap);
+
+                    baseCurrency = fromSpinner.getSelectedItem().toString();
+                    writeNewGroup(name, memberlist, userKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap, baseCurrency);
+
                 });
             }
 
@@ -106,10 +115,10 @@ public class NameGroupPage extends AppCompatActivity {
         return userMap;
     }
 
-    private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap, Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap ) {
+    private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap, Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap, String baseCurrency) {
         //gName = ((TextView) findViewById(R.id.editText)).getText().toString();
         System.out.println("This is the groupname: " + gName);
-        Group group = new Group(gName, members, memberKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap);
+        Group group = new Group(gName, members, memberKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap, baseCurrency);
         db.collection("groups")
                 .add(group)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

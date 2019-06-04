@@ -30,6 +30,7 @@ public class DeleteExpenseActivity extends AppCompatActivity {
     ArrayList<String> userWhoPayed = new ArrayList<>();
     ArrayList<String> expenses = new ArrayList<>();
     ArrayList<ArrayList<String>> participants = new ArrayList<>();
+    ArrayList<String> uniqueKeyArray = new ArrayList<>();
     Button backBtn;
     private Map<String, String> expenseNameMap;
     private Map<String, Double> expenseMap;
@@ -38,6 +39,7 @@ public class DeleteExpenseActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private String currentUser;
+
 
 
     @Override
@@ -71,11 +73,15 @@ public class DeleteExpenseActivity extends AppCompatActivity {
                 participantsMap = documentSnapshot.toObject(Group.class).getParticipantsMap();
 
                 for (String value : expenseNameMap.values()) {
-                    expenseNames.add(value.toString());
+                    expenseNames.add(value);
+                }
+
+                for(String key : expenseNameMap.keySet()){
+                    uniqueKeyArray.add(key);
                 }
 
                 for (String value : userWhoPayedMap.values()) {
-                    userWhoPayed.add(value.toString());
+                    userWhoPayed.add(value);
                 }
 
                 for (Double value : expenseMap.values()) {
@@ -87,6 +93,7 @@ public class DeleteExpenseActivity extends AppCompatActivity {
                 }
 
 
+
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, expenseNames);
                 expenseListView.setAdapter(arrayAdapter);
 
@@ -95,13 +102,22 @@ public class DeleteExpenseActivity extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         //expenseMembers.add(groupMembers.get(position));
 
+                        System.out.println("DELETEEXPENSEACTIVITY");
+                        System.out.println("expenseName" + expenseNames.get(position));
+                        System.out.println("userWhoPayed"+ userWhoPayed.get(position));
+                        System.out.println("expense" + expenses.get(position));
+                        System.out.println("currentUser" + currentUser);
+                        System.out.println("uniqueKey" + uniqueKeyArray.get(position));
+
                         Intent viewExpenseIntent = new Intent(getApplicationContext(), ViewExpense.class);
                         viewExpenseIntent.putExtra("groupKey", groupKey);
                         viewExpenseIntent.putExtra("expenseName", expenseNames.get(position));
                         viewExpenseIntent.putExtra("userWhoPayed", userWhoPayed.get(position));
                         viewExpenseIntent.putExtra("expense", expenses.get(position));
                         viewExpenseIntent.putExtra("currentUser", currentUser);
+                        viewExpenseIntent.putExtra("uniqueExpenseKey", uniqueKeyArray.get(position));
                         viewExpenseIntent.putStringArrayListExtra("participants", participants.get(position));
+
                         startActivity(viewExpenseIntent);
 
                     }
