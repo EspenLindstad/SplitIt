@@ -165,9 +165,9 @@ public class Group {
         return settlementArr;
     }
 
-    public void addGroupMember(String user, String key) {
 
-        //List<String> groupList = new ArrayList<>();
+    public void addGroupMember(String user, String key, ArrayList<Double> settlementArr) {
+
         double[][] settlement = arrayToMat(settlementArr);
 
         groupList.add(user);
@@ -175,7 +175,7 @@ public class Group {
         userMap.put(user, members);
         setMembers(getMembers()+1);
 
-        double[][] temp = new double[groupList.size() + 1][groupList.size() + 1];
+        double[][] temp = new double[getMembers()][getMembers()];
 
         for (int i = 0; i < settlement.length; i++) {
             for (int j = 0; j < settlement.length; j++) {

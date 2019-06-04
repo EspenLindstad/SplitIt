@@ -83,10 +83,9 @@ public class AddNewGroupMember extends AppCompatActivity {
             public void onClick(View v) {
                 updateGroup(newMembersList, newMembersKeys);
 
-                Intent doneIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
-                doneIntent.putExtra("groupKey", groupKey);
-                startActivity(doneIntent);
-                finish();
+                Intent backIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
+                backIntent.putExtra("groupKey", groupKey);
+                startActivity(backIntent);
 
             }
         });
@@ -192,11 +191,12 @@ public class AddNewGroupMember extends AppCompatActivity {
                 Map<String, Integer> groupMap = group.getUserMap();
                 ArrayList<String> members = group.getGroupList();
                 ArrayList<String> keys = group.getGroupKeys();
+                ArrayList<Double> settlementArr = group.getSettlementArr();
                 String groupName = group.getName();
                 System.out.println("This is the new memberkeys: " + newMembersKeys);
 
                 for (int i = 0; i < newMembersKeys.size(); i++) {
-                    group.addGroupMember(newMembersList.get(i), newMembersKeys.get(i));
+                    group.addGroupMember(newMembersList.get(i), newMembersKeys.get(i), settlementArr);
                     addUserToSettlement(groupKey, newMembersKeys.get(i), groupName);
                 }
 
@@ -207,6 +207,7 @@ public class AddNewGroupMember extends AppCompatActivity {
                 db.collection("groups").document(groupKey).set(newGroupMap, SetOptions.merge());
                 db.collection("groups").document(groupKey).update("members", group.getMembers());
                 db.collection("groups").document(groupKey).update("userMap", group.getUserMap());
+                db.collection("groups").document(groupKey).update("settlementArr", group.getSettlementArr());
 
                 System.out.println("This is the grouplist after updateGroup: " + group.getGroupList());
             }

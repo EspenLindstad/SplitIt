@@ -46,23 +46,16 @@ public class SettlementHomepage extends AppCompatActivity {
 
     public ListView userListView;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settlement_homepage);
-
-        userListView = (ListView) findViewById(R.id.groupmembersListView);
+    public void onResume() {
+        super.onResume();
 
         Intent intent = getIntent();
 
         groupKey = intent.getExtras().getString("groupKey");
 
-        addBtn = (Button) findViewById(R.id.addBtn);
-        deleteBtn = (Button) findViewById(R.id.deleteBtn);
-        plusBtn = (Button) findViewById(R.id.plusBtn);
-        payNextPerson = (TextView) findViewById(R.id.userTextView);
+        System.out.println("this is the groupKey: " + groupKey);
 
-        goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
+        userListView = (ListView) findViewById(R.id.groupmembersListView);
 
         plusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,9 +87,6 @@ public class SettlementHomepage extends AppCompatActivity {
                 startActivity(settlementIntent);
             }
         });
-
-
-        System.out.println("this is the groupKey: " + groupKey);
 
         DocumentReference docRef = db.collection("groups").document(groupKey);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -145,7 +135,21 @@ public class SettlementHomepage extends AppCompatActivity {
             }
         });
 
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settlement_homepage);
+
+
+
+        addBtn = (Button) findViewById(R.id.addBtn);
+        deleteBtn = (Button) findViewById(R.id.deleteBtn);
+        plusBtn = (Button) findViewById(R.id.plusBtn);
+        payNextPerson = (TextView) findViewById(R.id.userTextView);
+
+        goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
 
     }
 

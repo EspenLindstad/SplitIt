@@ -87,8 +87,9 @@ public class SeeSettlement extends AppCompatActivity {
 
                 System.out.println(array);
 
-                if (array != null) {
+                if (array.size() != 0) {
                     for (Double i : (ArrayList<Double>) documentSnapshot.get("settlementArr")) {
+                        System.out.println("This is i: " + i);
                         settlementArray.add(i);
                     }
                     System.out.println("Groupsmembers: " + settlementArray);
