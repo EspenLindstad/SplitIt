@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,10 +67,20 @@ public class SettlementHomepage extends AppCompatActivity {
         plusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent addIntent = new Intent(getApplicationContext(), AddNewGroupMember.class);
-                addIntent.putStringArrayListExtra("groupMembers", groupMembers);
-                addIntent.putExtra("groupKey", groupKey);
-                startActivity(addIntent);
+                DocumentReference docRef = db.collection("groups").document(groupKey);
+                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ArrayList<String> groupkeys = (ArrayList<String>) documentSnapshot.get("groupKeys");
+
+                        Intent addIntent = new Intent(getApplicationContext(), AddNewGroupMember.class);
+                        addIntent.putStringArrayListExtra("groupMembers", groupMembers);
+                        addIntent.putStringArrayListExtra("groupkeys", groupkeys);
+                        addIntent.putExtra("groupKey", groupKey);
+                        startActivity(addIntent);
+                    }
+                });
+
             }
         });
 

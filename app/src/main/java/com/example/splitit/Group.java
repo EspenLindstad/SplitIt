@@ -54,6 +54,13 @@ public class Group {
         // IKKK SLETT DENNE
     }
 
+    public int getMembers() {
+        return members;
+    }
+
+    public void setMembers(int members) {
+        this.members = members;
+    }
 
     public void setUserMap(Map<String, Integer> userMap) {
         this.userMap = userMap;
@@ -77,6 +84,9 @@ public class Group {
         return settlementArr;
     }
 
+    public String getName() {
+        return name;
+    }
 
     public Map<String, String> getExpenseNameMap() {
         return expenseNameMap;
@@ -155,14 +165,15 @@ public class Group {
         return settlementArr;
     }
 
-    public void addGroupMember(String user) {
+    public void addGroupMember(String user, String key) {
 
         //List<String> groupList = new ArrayList<>();
         double[][] settlement = arrayToMat(settlementArr);
 
         groupList.add(user);
+        groupKeys.add(key);
         userMap.put(user, members);
-        members++;
+        setMembers(getMembers()+1);
 
         double[][] temp = new double[groupList.size() + 1][groupList.size() + 1];
 
