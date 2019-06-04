@@ -77,7 +77,6 @@ public class Group {
         return settlementArr;
     }
 
-
     public Map<String, String> getExpenseNameMap() {
         return expenseNameMap;
     }
