@@ -33,7 +33,12 @@ public class SeeSettlement extends AppCompatActivity {
     private ArrayList<String> debitUsers = new ArrayList<>();
     private ArrayList<String> creditUsers = new ArrayList<>();
     private ArrayList<String> sums = new ArrayList<>();
-    private ArrayList<Double> groupMembers = new ArrayList<>();
+    private ArrayList<Double> settlementArray = new ArrayList<>();
+
+    private ArrayList<String> testing = new ArrayList<>();
+    private ArrayList<String> testing1 = new ArrayList<>();
+    private ArrayList<String> testing2 = new ArrayList<>();
+
 
     private String groupKey;
 
@@ -82,32 +87,45 @@ public class SeeSettlement extends AppCompatActivity {
 
                 if (array != null) {
                     for (Double i : (ArrayList<Double>) documentSnapshot.get("settlement")) {
-                        groupMembers.add(i);
+                        settlementArray.add(i);
                     }
-                    System.out.println("Groupsmembers: " + groupMembers);
+                    System.out.println("Groupsmembers: " + settlementArray);
 
-                    settlement = arrayToMat(groupMembers, count);
+                    settlement = arrayToMat(settlementArray, count);
 
                     SplitAlgorithm splitter = new SplitAlgorithm();
 
                     splitter.minCashFlow(settlement, count);
+
+                    for (String i : group.getGroupList()) {
+                        if (temporaryMap.containsKey(i)) {
+                            int trenger = temporaryMap.get(i);
+                        }
+                    }
+
 
 
                     debitUsers = splitter.getDebitors();
                     creditUsers = splitter.getCreditors();
                     sums = splitter.getSums();
 
-                    // Dette må testes mer
-                    for (String i : debitUsers) {
-                        for (Map.Entry<String, Integer> entry : temporaryMap.entrySet()) {
-                            if (entry.getValue().equals(i)) {
-                                System.out.println(entry.getKey());
-                            }
-                        }
+
+                    for (String s : debitUsers) {
+                        testing.add(group.getGroupList().get(Integer.parseInt(s)));
+                        System.out.println("Testing: " + testing);
+                    }
+                    for (String s : creditUsers) {
+                        testing1.add(group.getGroupList().get(Integer.parseInt(s)));
+                        System.out.println("Testing: " + testing1);
+                    }
+                    for (String s : sums) {
+                        testing2.add(splitter.getSums().get(Integer.parseInt(s)));
+                        System.out.println("Testing: " + testing2);
                     }
 
 
-                    System.out.println("Size og debitUsers");
+
+                    System.out.println("Size of debitUsers");
                     System.out.println(debitUsers.size());
 
                     customAdapter = new CustomAdapter();
@@ -154,7 +172,7 @@ public class SeeSettlement extends AppCompatActivity {
             TextView creditUser = (TextView)view.findViewById(R.id.creditUserTextView);
             //TextView arrow = (TextView)view.findViewById(R.id.textView10);
 
-            creditUser.setText(creditUsers.get(i) + " ows " + debitUsers.get(i) + " " + sums.get(i) );
+            creditUser.setText(testing1.get(i) + " ows " + testing.get(i) + " " + testing2.get(i) );
 
             return view;
         }
