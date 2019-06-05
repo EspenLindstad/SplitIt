@@ -41,6 +41,7 @@ public class SeeSettlement extends AppCompatActivity {
 
 
     private String groupKey;
+    private String baseCurrency;
 
     private Button backBtn;
 
@@ -51,20 +52,8 @@ public class SeeSettlement extends AppCompatActivity {
 
     private double[][] settlement;
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_see_settlement);
-
-
-
-        settlements = findViewById(R.id.settlementsListView);
-        backBtn = findViewById(R.id.arrowBackBtn);
-        topText = findViewById(R.id.topTextView);
-        noListTextView = (TextView) findViewById(R.id.noListTextView);
-        noListTextView.setVisibility(View.GONE);
-
+    protected void onResume() {
+        super.onResume();
 
         Intent intent = getIntent();
         groupKey = intent.getExtras().getString("groupKey");
@@ -76,6 +65,8 @@ public class SeeSettlement extends AppCompatActivity {
                 Group group = documentSnapshot.toObject(Group.class);
 
                 Map<String, Integer> temporaryMap;
+
+                baseCurrency = group.getBaseCurrency();
 
                 temporaryMap = group.getUserMap();
 
@@ -145,6 +136,22 @@ public class SeeSettlement extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_see_settlement);
+
+
+
+        settlements = findViewById(R.id.settlementsListView);
+        backBtn = findViewById(R.id.arrowBackBtn);
+        topText = findViewById(R.id.topTextView);
+        noListTextView = (TextView) findViewById(R.id.noListTextView);
+        noListTextView.setVisibility(View.GONE);
+
+
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,7 +183,7 @@ public class SeeSettlement extends AppCompatActivity {
             TextView creditUser = (TextView)view.findViewById(R.id.creditUserTextView);
             //TextView arrow = (TextView)view.findViewById(R.id.textView10);
 
-            creditUser.setText(testing1.get(i) + " ows " + testing.get(i) + " " + testing2.get(i) );
+            creditUser.setText(testing1.get(i) + " ows " + testing.get(i) + " " + testing2.get(i) + " " + baseCurrency );
 
             return view;
         }

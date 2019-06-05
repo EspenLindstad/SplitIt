@@ -105,6 +105,13 @@ public class NameGroupPage extends AppCompatActivity {
                     writeNewGroup(name, memberlist, userKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap, baseCurrency);
 
                 });
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent backIntent = new Intent(getApplicationContext(), AddGroupMember.class);
+                startActivity(backIntent);
+            }
+        });
             }
 
 

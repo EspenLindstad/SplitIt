@@ -2,6 +2,7 @@ package com.example.splitit;
 
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -99,6 +100,14 @@ public class AddGroupMember extends AppCompatActivity {
 
         TextView topText = (TextView) findViewById(R.id.textView4);
 
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent backIntent = new Intent(getApplicationContext(), homepage.class);
+                startActivity(backIntent);
+            }
+        });
+
 
         readData(new MyCallback() {
             @Override
@@ -115,7 +124,7 @@ public class AddGroupMember extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (!memberlist.contains(usernamelist.get(position))) {
-                    view.setBackgroundColor(0xFF00FF00);
+                    view.setBackgroundColor(Color.LTGRAY);
                     view.invalidate();
                     memberlist.add(usernamelist.get(position));
                     userKeys.add(userkeylist.get(position));
