@@ -5,10 +5,15 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +52,7 @@ public class NameGroupPage extends AppCompatActivity {
 
     private Button backButton;
     private Button doneButton;
+    private Button infoBtn;
 
     private String baseCurrency;
 
@@ -81,6 +87,7 @@ public class NameGroupPage extends AppCompatActivity {
 
         backButton = (Button) findViewById(R.id.button2);
         doneButton = (Button) findViewById(R.id.doneBtn);
+        infoBtn = (Button) findViewById(R.id.infoBtn);
 
         participantsView = (ListView) findViewById(R.id.usersList);
 
@@ -110,6 +117,12 @@ public class NameGroupPage extends AppCompatActivity {
             public void onClick(View v) {
                 Intent backIntent = new Intent(getApplicationContext(), AddGroupMember.class);
                 startActivity(backIntent);
+            }
+        });
+        infoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onButtonShowPopupWindowClick(findViewById(android.R.id.content));
             }
         });
             }
@@ -202,6 +215,33 @@ public class NameGroupPage extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void onButtonShowPopupWindowClick(View view) {
+
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_window, null);
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        // dismiss the popup window when touched
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
     }
 
 

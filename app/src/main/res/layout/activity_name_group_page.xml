@@ -111,11 +111,21 @@
 
     <TextView
         android:id="@+id/textView22"
-        android:layout_width="120dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:text="Base Currency"
+        app:layout_constraintBottom_toTopOf="@+id/baseCurrencySpinner"
+        app:layout_constraintEnd_toStartOf="@+id/infoBtn" />
+
+    <Button
+        android:id="@+id/infoBtn"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/ic_info_outline_black_24dp"
         app:layout_constraintBottom_toTopOf="@+id/baseCurrencySpinner"
         app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>
