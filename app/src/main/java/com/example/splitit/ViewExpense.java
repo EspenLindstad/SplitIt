@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,13 +29,11 @@ public class ViewExpense extends AppCompatActivity {
     private String expense;
     private String currentUser;
     private String uniqueKey;
-    private TextView ExpenseNameTV;
-    private TextView UserWhoPayedTV;
-    private TextView ExpenseTV;
     private Button deleteThisExpenseBtn;
     private Button backToViewExpenseBtn;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ArrayList<String> participants;
+    ArrayAdapter arrayAdapter;
 
 
     @Override
@@ -58,10 +57,20 @@ public class ViewExpense extends AppCompatActivity {
         System.out.println("currentUser" + currentUser);
         System.out.println("uniqueKey" + uniqueKey);
 
-        /*
+        TextView ExpenseNameTV = (TextView) findViewById(R.id.ExpenseNameTV);
+        TextView UserWhoPayedTV = (TextView) findViewById(R.id.UserWhoPayedTV);
+        TextView ExpenseTV = (TextView) findViewById(R.id.ExpenseTV);
+        ListView participantsLV = (ListView) findViewById(R.id.participantsLV);
+
+        arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, participants);
+        participantsLV.setAdapter(arrayAdapter);
+
+
         UserWhoPayedTV.setText(userWhoPayed);
         ExpenseNameTV.setText(expenseName);
-        ExpenseTV.setText(expense);*/
+        ExpenseTV.setText(expense);
+
+
 
         deleteThisExpenseBtn = findViewById(R.id.deleteThisExpenseBtn);
         backToViewExpenseBtn = findViewById(R.id.backToViewExpenseBtn);

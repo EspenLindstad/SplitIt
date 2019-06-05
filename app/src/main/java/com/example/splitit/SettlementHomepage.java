@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class SettlementHomepage extends AppCompatActivity {
     private Button goToSettlementBtn;
     private Button deleteBtn;
     private TextView payNextPerson;
+    private Button plusBtn;
     Map<String, Integer> userMap = new HashMap<>();
 
     ArrayAdapter arrayAdapter;
@@ -44,22 +46,39 @@ public class SettlementHomepage extends AppCompatActivity {
 
     public ListView userListView;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settlement_homepage);
+    public void onResume() {
+        super.onResume();
 
-        userListView = (ListView) findViewById(R.id.groupmembersListView);
+        System.out.println("Kjorer vi her etter add member?");
 
         Intent intent = getIntent();
 
         groupKey = intent.getExtras().getString("groupKey");
+        groupMembers = intent.getStringArrayListExtra("groupmembers");
 
-        addBtn = (Button) findViewById(R.id.addBtn);
-        deleteBtn = (Button) findViewById(R.id.deleteBtn);
-        payNextPerson = (TextView) findViewById(R.id.userTextView);
+        System.out.println("this is the groupKey: " + groupKey);
 
-        goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
+        userListView = (ListView) findViewById(R.id.groupmembersListView);
+
+        plusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DocumentReference docRef = db.collection("groups").document(groupKey);
+                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ArrayList<String> groupkeys = (ArrayList<String>) documentSnapshot.get("groupKeys");
+
+                        Intent addIntent = new Intent(getApplicationContext(), AddNewGroupMember.class);
+                        addIntent.putStringArrayListExtra("groupMembers", groupMembers);
+                        addIntent.putStringArrayListExtra("groupkeys", groupkeys);
+                        addIntent.putExtra("groupKey", groupKey);
+                        startActivity(addIntent);
+                    }
+                });
+
+            }
+        });
 
         goToSettlementBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,14 +91,13 @@ public class SettlementHomepage extends AppCompatActivity {
             }
         });
 
-
-        System.out.println("this is the groupKey: " + groupKey);
-
         DocumentReference docRef = db.collection("groups").document(groupKey);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                groupMembers = (ArrayList<String>) documentSnapshot.get("groupList");
+                if (groupMembers == null) {
+                    groupMembers = (ArrayList<String>) documentSnapshot.get("groupList");
+                }
                 System.out.println("These are my mfuckin gmember: " + groupMembers);
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
                 userListView.setAdapter(arrayAdapter);
@@ -122,7 +140,21 @@ public class SettlementHomepage extends AppCompatActivity {
             }
         });
 
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settlement_homepage);
+
+
+
+        addBtn = (Button) findViewById(R.id.addBtn);
+        deleteBtn = (Button) findViewById(R.id.deleteBtn);
+        plusBtn = (Button) findViewById(R.id.plusBtn);
+        payNextPerson = (TextView) findViewById(R.id.userTextView);
+
+        goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
 
     }
 

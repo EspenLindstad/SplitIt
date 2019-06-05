@@ -56,6 +56,8 @@ public class homepage extends AppCompatActivity {
     private ArrayList<String> testIds;
     ArrayAdapter arrayAdapter;
 
+    private Button addSettlement;
+
     private String uid;
     private String userkey;
 
@@ -110,6 +112,18 @@ public class homepage extends AppCompatActivity {
                             startActivity(nextIntent);
                         }
                     });
+                    addSettlement.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // Creating an intent, from the MainActivity to AnotherActivity
+                            Intent intent = new Intent(homepage.this, AddGroupMember.class);
+
+                            intent.putExtra("userkey", userkey);
+
+                            // Invoking the intent, start AnotherActivity
+                            startActivity(intent);
+                        }
+                    });
                 }
             }
 
@@ -123,7 +137,7 @@ public class homepage extends AppCompatActivity {
 
         user = Auth.getCurrentUser();
 
-        final Button addSettlement = (Button) findViewById(R.id.addSettlement);
+        addSettlement = (Button) findViewById(R.id.addSettlement);
 
         signOutBtn = (Button) findViewById(R.id.logoutBtn);
         signOutBtn.setVisibility(View.GONE);
@@ -144,18 +158,6 @@ public class homepage extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        addSettlement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Creating an intent, from the MainActivity to AnotherActivity
-                Intent intent = new Intent(homepage.this, AddGroupMember.class);
-
-                intent.putExtra("userkey", userkey);
-
-                // Invoking the intent, start AnotherActivity
-                startActivity(intent);
-            }
-        });
 
         /*
         readData(new PartOfInterface() {

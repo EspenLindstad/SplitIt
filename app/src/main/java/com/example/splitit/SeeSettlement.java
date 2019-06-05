@@ -83,25 +83,25 @@ public class SeeSettlement extends AppCompatActivity {
                 count = temp.intValue();
                 System.out.println("members count: " + count);
 
-                ArrayList<Double> array = (ArrayList<Double>) documentSnapshot.get("settlement");
+                ArrayList<Double> array = (ArrayList<Double>) documentSnapshot.get("settlementArr");
 
-                if (array != null) {
-                    for (Double i : (ArrayList<Double>) documentSnapshot.get("settlement")) {
+                System.out.println(array);
+
+                if (array.size() != 0) {
+                    for (Double i : (ArrayList<Double>) documentSnapshot.get("settlementArr")) {
+                        System.out.println("This is i: " + i);
                         settlementArray.add(i);
                     }
                     System.out.println("Groupsmembers: " + settlementArray);
 
                     settlement = arrayToMat(settlementArray, count);
 
+
                     SplitAlgorithm splitter = new SplitAlgorithm();
 
-                    splitter.minCashFlow(settlement, count);
+                    System.out.println(settlement.length);
 
-                    for (String i : group.getGroupList()) {
-                        if (temporaryMap.containsKey(i)) {
-                            int trenger = temporaryMap.get(i);
-                        }
-                    }
+                    splitter.minCashFlow(settlement, count);
 
 
 
@@ -109,6 +109,9 @@ public class SeeSettlement extends AppCompatActivity {
                     creditUsers = splitter.getCreditors();
                     sums = splitter.getSums();
 
+                    System.out.println(debitUsers);
+                    System.out.println(creditUsers);
+                    System.out.println(sums);
 
                     for (String s : debitUsers) {
                         testing.add(group.getGroupList().get(Integer.parseInt(s)));
@@ -119,9 +122,10 @@ public class SeeSettlement extends AppCompatActivity {
                         System.out.println("Testing: " + testing1);
                     }
                     for (String s : sums) {
-                        testing2.add(splitter.getSums().get(Integer.parseInt(s)));
+                        testing2 = splitter.getSums();
                         System.out.println("Testing: " + testing2);
                     }
+
 
 
 
