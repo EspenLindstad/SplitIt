@@ -37,6 +37,7 @@ public class SettlementHomepage extends AppCompatActivity {
     private Button addBtn;
     private Button goToSettlementBtn;
     private Button deleteBtn;
+    private Button homeBtn;
     private TextView payNextPerson;
     private TextView toptext;
     private Button plusBtn;
@@ -159,6 +160,15 @@ public class SettlementHomepage extends AppCompatActivity {
         payNextPerson = (TextView) findViewById(R.id.userTextView);
 
         goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
+
+        homeBtn = (Button) findViewById(R.id.homeBtn);
+        homeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent homeIntent = new Intent(getApplicationContext(), homepage.class);
+                startActivity(homeIntent);
+            }
+        });
 
     }
 

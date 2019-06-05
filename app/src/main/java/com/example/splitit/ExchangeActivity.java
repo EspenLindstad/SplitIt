@@ -53,6 +53,8 @@ public class ExchangeActivity extends AppCompatActivity {
     Map<String, Double> expenseMapTemp;
     Map<String, ArrayList<String>> participantsMapTemp;
     Map<String, String> userWhoPayedMapTemp;
+    private Button backBtn;
+    private TextView toptext;
 
 
     @Override
@@ -62,9 +64,12 @@ public class ExchangeActivity extends AppCompatActivity {
 
         final Button addExpenseBtn = (Button) findViewById(R.id.addExpenseBtn);
         final TextView moneyText = (TextView) findViewById(R.id.moneyText);
+        toptext = (TextView) findViewById(R.id.addExpenseTextView);
         final Spinner fromSpinner = (Spinner) findViewById(R.id.fromSpinner);
         final Button addAllBtn = (Button) findViewById(R.id.addAllBtn);
         final EditText name = ((EditText) findViewById(R.id.settlementName));
+
+
 
         userListView = (ListView) findViewById(R.id.userListView);
 
@@ -79,6 +84,16 @@ public class ExchangeActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         groupKey = intent.getExtras().getString("groupKey");
+
+        backBtn = (Button) findViewById(R.id.addExpenseBackBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent backIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
+                backIntent.putExtra("groupKey", groupKey);
+                startActivity(backIntent);
+            }
+        });
 
         DocumentReference docRef = db.collection("groups").document(groupKey);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

@@ -19,13 +19,14 @@
 
     <Button
         android:id="@+id/arrowBackBtn"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="95dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="back"
-        android:textSize="10sp"
+        style="@android:style/Widget.Holo.Light.Button.Toggle"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/ic_arrow_back_black_24dp"
+        android:backgroundTint="#001B0D0D"
+        android:drawableStart="@drawable/ic_arrow_back_black_24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,13 +34,19 @@
         android:id="@+id/topTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="59dp"
-        android:layout_marginTop="29dp"
-        android:layout_marginEnd="126dp"
-        android:text="This is the full settlement"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Final settlement"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/settlementsListView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.397"
         app:layout_constraintStart_toEndOf="@+id/arrowBackBtn"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ListView
         android:id="@+id/settlementsListView"

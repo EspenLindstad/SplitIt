@@ -147,6 +147,8 @@ public class homepage extends AppCompatActivity {
         GroupListView = (ListView) findViewById(R.id.GroupListView);
         GroupListView.setVisibility(View.VISIBLE);
 
+
+
         signOutBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mAuth.getInstance().signOut();

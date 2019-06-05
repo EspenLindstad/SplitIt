@@ -52,20 +52,8 @@ public class SeeSettlement extends AppCompatActivity {
 
     private double[][] settlement;
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_see_settlement);
-
-
-
-        settlements = findViewById(R.id.settlementsListView);
-        backBtn = findViewById(R.id.arrowBackBtn);
-        topText = findViewById(R.id.topTextView);
-        noListTextView = (TextView) findViewById(R.id.noListTextView);
-        noListTextView.setVisibility(View.GONE);
-
+    protected void onResume() {
+        super.onResume();
 
         Intent intent = getIntent();
         groupKey = intent.getExtras().getString("groupKey");
@@ -147,6 +135,22 @@ public class SeeSettlement extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_see_settlement);
+
+
+
+        settlements = findViewById(R.id.settlementsListView);
+        backBtn = findViewById(R.id.arrowBackBtn);
+        topText = findViewById(R.id.topTextView);
+        noListTextView = (TextView) findViewById(R.id.noListTextView);
+        noListTextView.setVisibility(View.GONE);
+
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
