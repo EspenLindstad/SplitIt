@@ -38,9 +38,9 @@ public class signUp extends AppCompatActivity {
 
     private String key;
     private String uid;
-    String firstName;
-    String lastName;
-    String phoneNumber;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
 
     private Button backBtn;
 
@@ -61,11 +61,7 @@ public class signUp extends AppCompatActivity {
 
         Button newUserBtn = (Button) findViewById(R.id.newUserBtn);
         backBtn = (Button) findViewById(R.id.signupBackBtn);
-        firstName = ((EditText) findViewById(R.id.userFirstName)).getText().toString();
-        lastName = ((EditText) findViewById(R.id.userLastName)).getText().toString();
-        phoneNumber = ((EditText) findViewById(R.id.userPhoneNumber)).getText().toString();
-        final String email = ((EditText) findViewById(R.id.edit_email)).getText().toString();
-        final String password = ((EditText) findViewById(R.id.edit_password)).getText().toString();
+
 
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -98,6 +94,10 @@ public class signUp extends AppCompatActivity {
                 String email = ((EditText) findViewById(R.id.edit_email)).getText().toString();
                 String password = ((EditText) findViewById(R.id.edit_password)).getText().toString();
                 String password_auth = ((EditText) findViewById(R.id.edit_password_auth)).getText().toString();
+
+                firstName = ((EditText) findViewById(R.id.userFirstName)).getText().toString();
+                lastName = ((EditText) findViewById(R.id.userLastName)).getText().toString();
+                phoneNumber = ((EditText) findViewById(R.id.userPhoneNumber)).getText().toString();
 
                 if (password.equals(password_auth)) {
 
@@ -191,6 +191,8 @@ public class signUp extends AppCompatActivity {
                         intent.putExtra("firstName", firstName);
                         intent.putExtra("lastName", lastName);
                         intent.putExtra("phoneNumber", phoneNumber);
+                        intent.putExtra("email", email);
+
 
 
                         startActivity(intent);

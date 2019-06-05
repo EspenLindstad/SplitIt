@@ -78,7 +78,7 @@ public class SeeSettlement extends AppCompatActivity {
 
                 System.out.println(array);
 
-                if (array.size() != 0) {
+
                     for (Double i : (ArrayList<Double>) documentSnapshot.get("settlementArr")) {
                         System.out.println("This is i: " + i);
                         settlementArray.add(i);
@@ -123,17 +123,19 @@ public class SeeSettlement extends AppCompatActivity {
                     System.out.println("Size of debitUsers");
                     System.out.println(debitUsers.size());
 
+                    if (debitUsers.size() == 0) {
+                        noListTextView.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        noListTextView.setVisibility(View.GONE);
+                    }
+
                     customAdapter = new CustomAdapter();
 
                     settlements.setAdapter(customAdapter);
                 }
-                else {
-                    noListTextView.setVisibility(View.VISIBLE);
-                }
 
 
-
-            }
         });
 
     }
@@ -149,7 +151,7 @@ public class SeeSettlement extends AppCompatActivity {
         backBtn = findViewById(R.id.arrowBackBtn);
         topText = findViewById(R.id.topTextView);
         noListTextView = (TextView) findViewById(R.id.noListTextView);
-        noListTextView.setVisibility(View.GONE);
+        noListTextView.setVisibility(View.VISIBLE);
 
 
         backBtn.setOnClickListener(new View.OnClickListener() {

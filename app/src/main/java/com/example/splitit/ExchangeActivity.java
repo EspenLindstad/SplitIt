@@ -48,6 +48,7 @@ public class ExchangeActivity extends AppCompatActivity {
     ListView userListView;
     String baseCurrency;
     private ArrayList<String> expenseMembers = new ArrayList<>();
+    private ArrayList<String> tempMembers = new ArrayList<>();
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private String currentUser;
@@ -59,6 +60,11 @@ public class ExchangeActivity extends AppCompatActivity {
     private Button backBtn;
     private TextView toptext;
     private Spinner fromSpinner;
+    private Button addExpenseBtn;
+    private TextView moneyText;
+    private Button addAllBtn;
+    private EditText name;
+    private String getBasecurrencyPosition;
 
 
     @Override
@@ -66,16 +72,29 @@ public class ExchangeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exchange);
 
-        final Button addExpenseBtn = (Button) findViewById(R.id.addExpenseBtn);
-        final TextView moneyText = (TextView) findViewById(R.id.moneyText);
+
+        addExpenseBtn = (Button) findViewById(R.id.addExpenseBtn);
+        moneyText = (TextView) findViewById(R.id.moneyText);
         toptext = (TextView) findViewById(R.id.addExpenseTextView);
         fromSpinner = (Spinner) findViewById(R.id.fromSpinner);
-        final Button addAllBtn = (Button) findViewById(R.id.addAllBtn);
-        final EditText name = ((EditText) findViewById(R.id.settlementName));
+        addAllBtn = (Button) findViewById(R.id.addAllBtn);
+        name = ((EditText) findViewById(R.id.settlementName));
 
 
 
         userListView = (ListView) findViewById(R.id.userListView);
+
+        Intent intent = getIntent();
+        groupKey = intent.getExtras().getString("groupKey");
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
 
         //final Spinner toSpinner = (Spinner) findViewById(R.id.toSpinner);
         resultVal = 0.0;
@@ -84,14 +103,6 @@ public class ExchangeActivity extends AppCompatActivity {
         user = mAuth.getCurrentUser();
         String email = user.getEmail();
         currentUser = usernameFromEmail(email);
-
-
-        Intent intent = getIntent();
-        groupKey = intent.getExtras().getString("groupKey");
-        basecurrencyPosition = intent.getExtras().getString("baseCurrencyPos");
-        int startAt = Integer.parseInt(basecurrencyPosition);
-        System.out.println("This is the basecurrencyPos: " + startAt);
-        fromSpinner.setSelection(startAt);
 
         backBtn = (Button) findViewById(R.id.addExpenseBackBtn);
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -110,15 +121,30 @@ public class ExchangeActivity extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 groupMembers = documentSnapshot.toObject(Group.class).getGroupList();
                 baseCurrency =  documentSnapshot.toObject(Group.class).getBaseCurrency();
-                //set base currency må komme før her
+                basecurrencyPosition = documentSnapshot.toObject(Group.class).getBaseCurrencyPos();
+
+                int startAt = Integer.parseInt(basecurrencyPosition);
+                fromSpinner.setSelection(startAt);
+
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
 
                 addAllBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        expenseMembers = groupMembers;
-                        Toast.makeText(getApplicationContext(),"All members will be added to expense",
-                                Toast.LENGTH_SHORT).show();
+                        if (expenseMembers.size() != groupMembers.size()) {
+                            expenseMembers = groupMembers;
+                            Toast.makeText(getApplicationContext(),"All members will be added to the expense",
+                                    Toast.LENGTH_SHORT).show();
+                            addAllBtn.setText("REMOVE ALL");
+                            userListView.setVisibility(View.GONE);
+                        }
+                        else {
+                            expenseMembers = tempMembers;
+                            Toast.makeText(getApplicationContext(),"All members removed from the expense",
+                                    Toast.LENGTH_SHORT).show();
+                            addAllBtn.setText("SELECT ALL");
+                            userListView.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
 
@@ -130,12 +156,18 @@ public class ExchangeActivity extends AppCompatActivity {
                             view.setBackgroundColor(Color.LTGRAY);
                             view.invalidate();
                             expenseMembers.add(groupMembers.get(position));
+                            if (!tempMembers.contains(groupMembers.get(position))) {
+                                tempMembers.add(groupMembers.get(position));
+                            }
+
 
                         }
                         else {
                             expenseMembers.remove(groupMembers.get(position));
                             view.setBackgroundColor(0x00000000);
                             view.invalidate();
+                            tempMembers.remove(groupMembers.get(position));
+
 
                         }
 
@@ -261,7 +293,7 @@ public class ExchangeActivity extends AppCompatActivity {
 
                             expenseNameMapTemp.put(uniqueExpenseID, expenseName);
                             expenseMapTemp.put(uniqueExpenseID, resultVal);
-                            participantsMapTemp.put(uniqueExpenseID, groupMembers);
+                            participantsMapTemp.put(uniqueExpenseID, expenseMembers);
                             userWhoPayedMapTemp.put(uniqueExpenseID, currentUser);
 
                             Map<String, Object> expenseNameMap = new HashMap<String, Object>();
@@ -298,8 +330,8 @@ public class ExchangeActivity extends AppCompatActivity {
 
 
         });
-
     }
+
 
     private String usernameFromEmail(String email) {
         if (email.contains("@")) {

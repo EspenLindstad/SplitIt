@@ -54,14 +54,22 @@ public class homepage extends AppCompatActivity {
     private ArrayList<String> testIds;
     ArrayAdapter arrayAdapter;
 
-    String firstName;
-    String lastName;
-    String phoneNumber;
-
     private Button addSettlement;
 
     private String uid;
     private String userkey;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+    private String email;
+
+    private TextView emailTextView;
+    private TextView firstTextView;
+    private TextView lastTextView;
+    private TextView phoneTextView;
+    private TextView signedInAs;
+    private TextView textView13;
+
 
     public ListView GroupListView;
 
@@ -78,11 +86,26 @@ public class homepage extends AppCompatActivity {
                     GroupListView.setVisibility(View.GONE);
                     signOutBtn.setVisibility(View.VISIBLE);
                     addSettlement.setVisibility(View.GONE);
+                    emailTextView.setVisibility(View.VISIBLE);
+                    firstTextView.setVisibility(View.VISIBLE);
+                    lastTextView.setVisibility(View.VISIBLE);
+                    phoneTextView.setVisibility(View.VISIBLE);
+                    signedInAs.setVisibility(View.VISIBLE);
+                    textView13.setVisibility(View.GONE);
+
+
                     return true;
                 case R.id.navigation_home:
                     GroupListView.setVisibility(View.VISIBLE);
                     signOutBtn.setVisibility(View.GONE);
                     addSettlement.setVisibility(View.VISIBLE);
+                    emailTextView.setVisibility(View.GONE);
+                    firstTextView.setVisibility(View.GONE);
+                    lastTextView.setVisibility(View.GONE);
+                    phoneTextView.setVisibility(View.GONE);
+                    signedInAs.setVisibility(View.GONE);
+
+
                     return true;
             }
             return false;
@@ -93,10 +116,33 @@ public class homepage extends AppCompatActivity {
     public void onResume(){
         super.onResume();
 
+        Intent intent = getIntent();
+        firstName = intent.getStringExtra("firstName");
+        lastName = intent.getStringExtra("lastName");
+        phoneNumber = intent.getStringExtra("phoneNumber");
+        email = intent.getStringExtra("email");
+
+
+        System.out.println();
+
+        emailTextView.setText("Email: " + email);
+        firstTextView.setText("Firstname: " + firstName);
+        lastTextView.setText("Lastname: " + lastName);
+        phoneTextView.setText("Phonenumber: " + phoneNumber);
+
+        emailTextView.setVisibility(View.GONE);
+        firstTextView.setVisibility(View.GONE);
+        lastTextView.setVisibility(View.GONE);
+        phoneTextView.setVisibility(View.GONE);
+        signedInAs.setVisibility(View.GONE);
+
         readData(new PartOfInterface() {
             @Override
             public void onCallback(ArrayList<String> names, ArrayList<String> ids) {
                 if (names != null) {
+                    if (ids.size() > 0) {
+                        textView13.setVisibility(View.GONE);
+                    }
                     arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, names);
                     GroupListView.setAdapter(arrayAdapter);
                     GroupListView.setVisibility(View.VISIBLE);
@@ -125,6 +171,7 @@ public class homepage extends AppCompatActivity {
                         }
                     });
                 }
+
             }
 
         });
@@ -135,10 +182,12 @@ public class homepage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
 
-        Intent intent = getIntent();
-        firstName = intent.getStringExtra("firstName");
-        lastName = intent.getStringExtra("lastName");
-        phoneNumber = intent.getStringExtra("phoneNumber");
+        signedInAs = (TextView) findViewById(R.id.textView8);
+        emailTextView = (TextView) findViewById(R.id.textView11);
+        firstTextView = (TextView) findViewById(R.id.textView9);
+        lastTextView = (TextView) findViewById(R.id.textView10);
+        phoneTextView = (TextView) findViewById(R.id.textView12);
+        textView13 = (TextView) findViewById(R.id.textView13);
 
 
         user = Auth.getCurrentUser();

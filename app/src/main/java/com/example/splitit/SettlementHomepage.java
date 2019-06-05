@@ -60,8 +60,6 @@ public class SettlementHomepage extends AppCompatActivity {
         Intent intent = getIntent();
 
         groupKey = intent.getExtras().getString("groupKey");
-        basecurrencyPosition = intent.getExtras().getString("baseCurrencyPos");
-        System.out.println("BCP at settlement: " + basecurrencyPosition);
 
         groupMembers = intent.getStringArrayListExtra("groupmembers");
 
@@ -138,8 +136,6 @@ public class SettlementHomepage extends AppCompatActivity {
 
                 Intent newIntent = new Intent(getApplicationContext(), ExchangeActivity.class);
                 newIntent.putExtra("groupKey", groupKey);
-                newIntent.putExtra("baseCurrencyPos", basecurrencyPosition);
-                System.out.println("Fucking mother uck: " + basecurrencyPosition);
                 startActivity(newIntent);
             }
         });
@@ -181,9 +177,6 @@ public class SettlementHomepage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent homeIntent = new Intent(getApplicationContext(), homepage.class);
-                homeIntent.putExtra("firstName", firstName);
-                homeIntent.putExtra("lastName", lastName);
-                homeIntent.putExtra("phoneNumber", phoneNumber);
                 startActivity(homeIntent);
             }
         });

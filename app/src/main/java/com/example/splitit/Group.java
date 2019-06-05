@@ -17,6 +17,7 @@ public class Group {
     String baseCurrency;
     private String name;
     private String key;
+    private String baseCurrencyPos;
 
     private ArrayList<String> groupList;
     private ArrayList<String> groupKeys;
@@ -36,7 +37,7 @@ public class Group {
 
     int members;
 
-    public Group(String name, ArrayList groupList, ArrayList groupKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap,Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap, String baseCurrency) {
+    public Group(String name, ArrayList groupList, ArrayList groupKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap,Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap, String baseCurrency, String baseCurrencyPos) {
         this.name = name;
         this.groupList = groupList;
         this.groupKeys = groupKeys;
@@ -48,10 +49,21 @@ public class Group {
         this.participantsMap = participantsMap;
         this.userWhoPayedMap = userWhoPayedMap;
         this.baseCurrency = baseCurrency;
+        this.baseCurrencyPos = baseCurrencyPos;
     }
+
+
 
     public Group() {
         // IKKK SLETT DENNE
+    }
+
+    public String getBaseCurrencyPos() {
+        return baseCurrencyPos;
+    }
+
+    public void setBaseCurrencyPos(String baseCurrencyPos) {
+        this.baseCurrencyPos = baseCurrencyPos;
     }
 
     public int getMembers() {
