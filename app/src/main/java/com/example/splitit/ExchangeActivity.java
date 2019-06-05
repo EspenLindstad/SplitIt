@@ -2,6 +2,7 @@ package com.example.splitit;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -117,11 +118,21 @@ public class ExchangeActivity extends AppCompatActivity {
                 userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                         if (!expenseMembers.contains(groupMembers.get(position))) {
+                            view.setBackgroundColor(Color.LTGRAY);
+                            view.invalidate();
                             expenseMembers.add(groupMembers.get(position));
 
                         }
+                        else {
+                            expenseMembers.remove(groupMembers.get(position));
+                            view.setBackgroundColor(0x00000000);
+                            view.invalidate();
+
+                        }
+
+
+
                     }
                 });
 

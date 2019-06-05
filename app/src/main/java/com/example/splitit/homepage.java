@@ -37,8 +37,6 @@ import java.util.Set;
 
 public class homepage extends AppCompatActivity {
 
-    private TextView mTextMessage;
-
     private Button signOutBtn;
 
     private FirebaseAuth mAuth;
@@ -73,13 +71,11 @@ public class homepage extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_dashbboard:
-                    mTextMessage.setText(R.string.title_profile);
                     GroupListView.setVisibility(View.GONE);
                     signOutBtn.setVisibility(View.VISIBLE);
                     addSettlement.setVisibility(View.GONE);
                     return true;
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_settlements);
                     GroupListView.setVisibility(View.VISIBLE);
                     signOutBtn.setVisibility(View.GONE);
                     addSettlement.setVisibility(View.VISIBLE);
@@ -158,23 +154,9 @@ public class homepage extends AppCompatActivity {
             }
         });
 
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-
-        /*
-        readData(new PartOfInterface() {
-            @Override
-            public void onCallback(ArrayList<String> names, ArrayList<String> ids) {
-                if (names != null) {
-                    arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, names);
-                    GroupListView.setAdapter(arrayAdapter);
-                }
-            }
-
-        });
-        */
     }
 
     public void readData(PartOfInterface partOfInterface) {
