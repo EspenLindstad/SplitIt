@@ -31,6 +31,7 @@ public class ViewExpense extends AppCompatActivity {
     private String uniqueKey;
     private Button deleteThisExpenseBtn;
     private Button backToViewExpenseBtn;
+    private String baseCurrency;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ArrayList<String> participants;
     ArrayAdapter arrayAdapter;
@@ -49,13 +50,11 @@ public class ViewExpense extends AppCompatActivity {
         currentUser = viewExpenseIntent.getExtras().getString("currentUser");
         participants =  viewExpenseIntent.getExtras().getStringArrayList("participants");
         uniqueKey = viewExpenseIntent.getExtras().getString("uniqueExpenseKey");
+        baseCurrency = viewExpenseIntent.getExtras().getString("baseCurrency");
 
-        System.out.println("VIEWEXPENSE");
-        System.out.println("expenseName" + expenseName);
-        System.out.println("userWhoPayed"+ userWhoPayed);
-        System.out.println("expense" + expense);
-        System.out.println("currentUser" + currentUser);
-        System.out.println("uniqueKey" + uniqueKey);
+        double expenseDouble = Double.parseDouble(expense);
+        expenseDouble = Math.round(expenseDouble*100)/100;
+        expense = Double.toString(expenseDouble);
 
         TextView ExpenseNameTV = (TextView) findViewById(R.id.ExpenseNameTV);
         TextView UserWhoPayedTV = (TextView) findViewById(R.id.UserWhoPayedTV);
@@ -66,9 +65,9 @@ public class ViewExpense extends AppCompatActivity {
         participantsLV.setAdapter(arrayAdapter);
 
 
-        UserWhoPayedTV.setText(userWhoPayed);
-        ExpenseNameTV.setText(expenseName);
-        ExpenseTV.setText(expense);
+        UserWhoPayedTV.setText("User Who Payed: " + userWhoPayed);
+        ExpenseNameTV.setText("Expense Name: " + expenseName);
+        ExpenseTV.setText("Total: " + expense + " " + baseCurrency);
 
 
 

@@ -42,6 +42,9 @@ public class SettlementHomepage extends AppCompatActivity {
     private TextView toptext;
     private Button plusBtn;
     Map<String, Integer> userMap = new HashMap<>();
+    String firstName;
+    String lastName;
+    String phoneNumber;
 
     ArrayAdapter arrayAdapter;
 
@@ -153,6 +156,12 @@ public class SettlementHomepage extends AppCompatActivity {
         setContentView(R.layout.activity_settlement_homepage);
 
 
+        Intent intent = getIntent();
+        firstName = intent.getStringExtra("firstName");
+        lastName = intent.getStringExtra("lastName");
+        phoneNumber = intent.getStringExtra("phoneNumber");
+
+
 
         addBtn = (Button) findViewById(R.id.addBtn);
         deleteBtn = (Button) findViewById(R.id.deleteBtn);
@@ -166,6 +175,9 @@ public class SettlementHomepage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent homeIntent = new Intent(getApplicationContext(), homepage.class);
+                homeIntent.putExtra("firstName", firstName);
+                homeIntent.putExtra("lastName", lastName);
+                homeIntent.putExtra("phoneNumber", phoneNumber);
                 startActivity(homeIntent);
             }
         });

@@ -38,6 +38,9 @@ public class signUp extends AppCompatActivity {
 
     private String key;
     private String uid;
+    String firstName;
+    String lastName;
+    String phoneNumber;
 
 
     @Override
@@ -55,9 +58,9 @@ public class signUp extends AppCompatActivity {
 
 
         Button newUserBtn = (Button) findViewById(R.id.newUserBtn);
-        String firstName = ((EditText) findViewById(R.id.userFirstName)).getText().toString();
-        String lastName = ((EditText) findViewById(R.id.userLastName)).getText().toString();
-        String phoneNumber = ((EditText) findViewById(R.id.userPhoneNumber)).getText().toString();
+        firstName = ((EditText) findViewById(R.id.userFirstName)).getText().toString();
+        lastName = ((EditText) findViewById(R.id.userLastName)).getText().toString();
+        phoneNumber = ((EditText) findViewById(R.id.userPhoneNumber)).getText().toString();
         final String email = ((EditText) findViewById(R.id.edit_email)).getText().toString();
         final String password = ((EditText) findViewById(R.id.edit_password)).getText().toString();
 
@@ -180,6 +183,10 @@ public class signUp extends AppCompatActivity {
 
                         Intent intent = new Intent(getApplicationContext(), homepage.class);
                         intent.putExtra("userKey", key);
+                        intent.putExtra("firstName", firstName);
+                        intent.putExtra("lastName", lastName);
+                        intent.putExtra("phoneNumber", phoneNumber);
+
 
                         startActivity(intent);
                         finish();

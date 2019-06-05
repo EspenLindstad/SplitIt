@@ -24,6 +24,7 @@ public class DeleteExpenseActivity extends AppCompatActivity {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     String groupKey;
+    String baseCurrency;
     ArrayAdapter arrayAdapter;
     ListView expenseListView;
     ArrayList<String> expenseNames = new ArrayList<>();
@@ -71,6 +72,8 @@ public class DeleteExpenseActivity extends AppCompatActivity {
                 userWhoPayedMap = documentSnapshot.toObject(Group.class).getUserWhoPayedMap();
                 expenseMap = documentSnapshot.toObject(Group.class).getExpenseMap();
                 participantsMap = documentSnapshot.toObject(Group.class).getParticipantsMap();
+                baseCurrency = documentSnapshot.toObject(Group.class).getBaseCurrency();
+
 
                 for (String value : expenseNameMap.values()) {
                     expenseNames.add(value);
@@ -100,14 +103,6 @@ public class DeleteExpenseActivity extends AppCompatActivity {
                 expenseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        //expenseMembers.add(groupMembers.get(position));
-
-                        System.out.println("DELETEEXPENSEACTIVITY");
-                        System.out.println("expenseName" + expenseNames.get(position));
-                        System.out.println("userWhoPayed"+ userWhoPayed.get(position));
-                        System.out.println("expense" + expenses.get(position));
-                        System.out.println("currentUser" + currentUser);
-                        System.out.println("uniqueKey" + uniqueKeyArray.get(position));
 
                         Intent viewExpenseIntent = new Intent(getApplicationContext(), ViewExpense.class);
                         viewExpenseIntent.putExtra("groupKey", groupKey);
@@ -116,7 +111,10 @@ public class DeleteExpenseActivity extends AppCompatActivity {
                         viewExpenseIntent.putExtra("expense", expenses.get(position));
                         viewExpenseIntent.putExtra("currentUser", currentUser);
                         viewExpenseIntent.putExtra("uniqueExpenseKey", uniqueKeyArray.get(position));
+                        viewExpenseIntent.putExtra("baseCurrency", baseCurrency);
+
                         viewExpenseIntent.putStringArrayListExtra("participants", participants.get(position));
+
 
                         startActivity(viewExpenseIntent);
 
