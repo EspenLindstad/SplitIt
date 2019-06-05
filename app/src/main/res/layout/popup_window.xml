@@ -13,7 +13,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
-        android:text="The base currency is the curency the final settlement would be calculated in."
+        android:text="The base currency is the currency the final settlement would be calculated in."
         android:textSize="18sp" />
 
 </RelativeLayout>

@@ -93,7 +93,7 @@ public class ViewExpense extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if (currentUser.equals(userWhoPayed)){
-                            Toast.makeText(getApplicationContext(),"Ok det funker",
+                            Toast.makeText(getApplicationContext(),"Expense deleted",
                                     Toast.LENGTH_SHORT).show();
 
                             Map<String, String> userWhoPayedMapTemp = documentSnapshot.toObject(Group.class).getUserWhoPayedMap();
