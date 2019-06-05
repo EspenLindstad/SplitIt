@@ -76,11 +76,13 @@ public class homepage extends AppCompatActivity {
                     mTextMessage.setText(R.string.title_profile);
                     GroupListView.setVisibility(View.GONE);
                     signOutBtn.setVisibility(View.VISIBLE);
+                    addSettlement.setVisibility(View.GONE);
                     return true;
                 case R.id.navigation_home:
                     mTextMessage.setText(R.string.title_settlements);
                     GroupListView.setVisibility(View.VISIBLE);
                     signOutBtn.setVisibility(View.GONE);
+                    addSettlement.setVisibility(View.VISIBLE);
                     return true;
             }
             return false;

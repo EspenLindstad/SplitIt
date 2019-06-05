@@ -38,6 +38,7 @@ public class SettlementHomepage extends AppCompatActivity {
     private Button goToSettlementBtn;
     private Button deleteBtn;
     private TextView payNextPerson;
+    private TextView toptext;
     private Button plusBtn;
     Map<String, Integer> userMap = new HashMap<>();
 
@@ -69,6 +70,7 @@ public class SettlementHomepage extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         ArrayList<String> groupkeys = (ArrayList<String>) documentSnapshot.get("groupKeys");
 
+
                         Intent addIntent = new Intent(getApplicationContext(), AddNewGroupMember.class);
                         addIntent.putStringArrayListExtra("groupMembers", groupMembers);
                         addIntent.putStringArrayListExtra("groupkeys", groupkeys);
@@ -98,6 +100,8 @@ public class SettlementHomepage extends AppCompatActivity {
                 if (groupMembers == null) {
                     groupMembers = (ArrayList<String>) documentSnapshot.get("groupList");
                 }
+                toptext = (TextView) findViewById(R.id.textView22);
+                toptext.setText(documentSnapshot.toObject(Group.class).getName());
                 System.out.println("These are my mfuckin gmember: " + groupMembers);
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
                 userListView.setAdapter(arrayAdapter);

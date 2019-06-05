@@ -11,25 +11,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:text="New Settlement"
-        android:textSize="14sp"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/doneBtn"
         app:layout_constraintStart_toEndOf="@+id/button2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/doneBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Done"
+        android:background="@drawable/ic_done_black_24dp"
         android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/titleTextView"
@@ -37,14 +34,12 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Back"
+        android:background="@drawable/ic_arrow_back_black_24dp"
         android:textSize="10sp"
         app:layout_constraintEnd_toStartOf="@+id/titleTextView"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,13 +50,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="8dp"
         android:text="Name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toTopOf="@+id/editText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button2" />
 
@@ -75,23 +67,21 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="180dp"
+        android:layout_height="39dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/groupnameTextView"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/groupnameTextView" />
 
     <TextView
@@ -100,43 +90,32 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="9dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="344dp"
-        android:layout_marginBottom="13dp"
+        android:layout_marginBottom="4dp"
         android:text="Participants"
         app:layout_constraintBottom_toTopOf="@+id/usersList"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/editText" />
 
     <Spinner
         android:id="@+id/baseCurrencySpinner"
-        android:layout_width="122dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="39dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="32dp"
         android:entries="@array/spinnerItems"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/editText"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.127" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="107dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginBottom="8dp"
-        android:text="Base Currency"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/usersList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/groupnameTextView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.098" />
+        app:layout_constraintStart_toEndOf="@+id/editText" />
+
+    <TextView
+        android:id="@+id/textView22"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Base Currency"
+        app:layout_constraintBottom_toTopOf="@+id/baseCurrencySpinner"
+        app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>

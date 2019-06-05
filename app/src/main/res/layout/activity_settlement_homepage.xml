@@ -7,15 +7,14 @@
     tools:context=".SettlementHomepage">
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/textView22"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="60dp"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/addBtn"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,52 +23,51 @@
         android:id="@+id/addBtn"
         android:layout_width="180dp"
         android:layout_height="50dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
         android:text="Add expense"
-        app:layout_constraintBottom_toTopOf="@+id/nextPersonTextView"
+        app:layout_constraintBottom_toTopOf="@+id/goToSettlementBtn"
         app:layout_constraintEnd_toStartOf="@+id/deleteBtn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/deleteBtn"
         android:layout_width="180dp"
         android:layout_height="50dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
         android:text="Delete Expense"
-        app:layout_constraintBottom_toTopOf="@+id/nextPersonTextView"
+        app:layout_constraintBottom_toTopOf="@+id/goToSettlementBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/addBtn"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintStart_toEndOf="@+id/addBtn" />
 
     <TextView
         android:id="@+id/nextPersonTextView"
         android:layout_width="380dp"
-        android:layout_height="39dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="Who should pay next?"
         android:textAlignment="center"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/userTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.533"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView22" />
 
     <TextView
         android:id="@+id/userTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Rigmor!"
+        app:layout_constraintBottom_toTopOf="@+id/plusBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,18 +81,19 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="9dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/goToSettlementBtn"
+        app:layout_constraintBottom_toTopOf="@+id/addBtn"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/participantsTextView" />
 
     <Button
         android:id="@+id/goToSettlementBtn"
         android:layout_width="380dp"
         android:layout_height="68dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
         android:text="@string/see_settlement"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -104,25 +103,24 @@
     <TextView
         android:id="@+id/participantsTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="40dp"
-        android:layout_marginBottom="8dp"
         android:background="#FAFAFA"
         android:text="Participants"
-        app:layout_constraintBottom_toTopOf="@+id/groupmembersListView"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/nextPersonTextView" />
 
     <Button
         android:id="@+id/plusBtn"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="20dp"
-        android:background="#0000"
-        android:drawableBottom="@drawable/ic_add_circle_outline_black_24dp"
+        android:layout_width="36dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="39dp"
+        android:background="@drawable/ic_person_add_black_24dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/groupmembersListView"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/participantsTextView"
+        app:layout_constraintTop_toBottomOf="@+id/nextPersonTextView"
         tools:visibility="visible" />
 </android.support.constraint.ConstraintLayout>
