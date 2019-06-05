@@ -33,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,11 +106,16 @@ public class NameGroupPage extends AppCompatActivity {
 
 
 
+
         doneButton.setOnClickListener(view -> {
                     name = ((TextView) findViewById(R.id.editText)).getText().toString();
 
                     baseCurrency = fromSpinner.getSelectedItem().toString();
-                    writeNewGroup(name, memberlist, userKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap, baseCurrency);
+                    List<String> spinnerItems = Arrays.asList(getResources().getStringArray(R.array.spinnerItems));
+                    String basecurrencyPosition = Integer.toString(spinnerItems.indexOf(baseCurrency));
+                    System.out.println("This is the basecurrencypos at start: " + basecurrencyPosition);
+
+                    writeNewGroup(name, memberlist, userKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap, baseCurrency, basecurrencyPosition);
 
                 });
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +142,7 @@ public class NameGroupPage extends AppCompatActivity {
         return userMap;
     }
 
-    private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap, Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap, String baseCurrency) {
+    private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap, Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap, String baseCurrency, String baseCurrencyPos) {
         //gName = ((TextView) findViewById(R.id.editText)).getText().toString();
         System.out.println("This is the groupname: " + gName);
         Group group = new Group(gName, members, memberKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap, baseCurrency);
@@ -151,6 +157,7 @@ public class NameGroupPage extends AppCompatActivity {
                         System.out.println("These are the memberkeys: " + memberKeys);
                         System.out.println("These are the membernames: " + memberlist);
 
+
                         if (memberKeys.contains(null)) {
                             memberKeys.remove(null);
                         }
@@ -162,8 +169,9 @@ public class NameGroupPage extends AppCompatActivity {
                         Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
 
                         nextIntent.putExtra("groupKey", uniqueKey);
+                        nextIntent.putExtra("baseCurrencyPos", baseCurrencyPos);
 
-                        System.out.println("intentkey: " + uniqueKey);
+                        System.out.println("intentkey: " + baseCurrencyPos);
 
                         startActivity(nextIntent);
                         finish();

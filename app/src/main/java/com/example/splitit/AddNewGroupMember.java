@@ -131,6 +131,15 @@ public class AddNewGroupMember extends AppCompatActivity {
             }
         });
 
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent backIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
+                backIntent.putExtra("groupKey", groupKey);
+                startActivity(backIntent);
+            }
+        });
+
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

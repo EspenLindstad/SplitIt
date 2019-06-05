@@ -29,6 +29,7 @@ public class SettlementHomepage extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private String groupKey;
+    private String basecurrencyPosition;
 
     private ArrayList<String> groupMembers;
 
@@ -59,6 +60,9 @@ public class SettlementHomepage extends AppCompatActivity {
         Intent intent = getIntent();
 
         groupKey = intent.getExtras().getString("groupKey");
+        basecurrencyPosition = intent.getExtras().getString("baseCurrencyPos");
+        System.out.println("BCP at settlement: " + basecurrencyPosition);
+
         groupMembers = intent.getStringArrayListExtra("groupmembers");
 
         System.out.println("this is the groupKey: " + groupKey);
@@ -134,6 +138,8 @@ public class SettlementHomepage extends AppCompatActivity {
 
                 Intent newIntent = new Intent(getApplicationContext(), ExchangeActivity.class);
                 newIntent.putExtra("groupKey", groupKey);
+                newIntent.putExtra("baseCurrencyPos", basecurrencyPosition);
+                System.out.println("Fucking mother uck: " + basecurrencyPosition);
                 startActivity(newIntent);
             }
         });

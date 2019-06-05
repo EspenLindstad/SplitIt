@@ -183,7 +183,7 @@ public class SeeSettlement extends AppCompatActivity {
             TextView creditUser = (TextView)view.findViewById(R.id.creditUserTextView);
             //TextView arrow = (TextView)view.findViewById(R.id.textView10);
 
-            creditUser.setText(testing1.get(i) + " ows " + testing.get(i) + " " + testing2.get(i) + " " + baseCurrency );
+            creditUser.setText(testing1.get(i) + " owes " + testing.get(i) + " " + testing2.get(i) + " " + baseCurrency );
 
             return view;
         }

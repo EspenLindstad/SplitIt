@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,8 @@ import java.util.UUID;
 public class ExchangeActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     static Double resultVal;
-    String groupKey;
+    private String groupKey;
+    private String basecurrencyPosition;
     private ArrayList<String> groupMembers;
     ArrayAdapter arrayAdapter;
     ListView userListView;
@@ -56,6 +58,7 @@ public class ExchangeActivity extends AppCompatActivity {
     Map<String, String> userWhoPayedMapTemp;
     private Button backBtn;
     private TextView toptext;
+    private Spinner fromSpinner;
 
 
     @Override
@@ -66,7 +69,7 @@ public class ExchangeActivity extends AppCompatActivity {
         final Button addExpenseBtn = (Button) findViewById(R.id.addExpenseBtn);
         final TextView moneyText = (TextView) findViewById(R.id.moneyText);
         toptext = (TextView) findViewById(R.id.addExpenseTextView);
-        final Spinner fromSpinner = (Spinner) findViewById(R.id.fromSpinner);
+        fromSpinner = (Spinner) findViewById(R.id.fromSpinner);
         final Button addAllBtn = (Button) findViewById(R.id.addAllBtn);
         final EditText name = ((EditText) findViewById(R.id.settlementName));
 
@@ -85,6 +88,10 @@ public class ExchangeActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         groupKey = intent.getExtras().getString("groupKey");
+        basecurrencyPosition = intent.getExtras().getString("baseCurrencyPos");
+        int startAt = Integer.parseInt(basecurrencyPosition);
+        System.out.println("This is the basecurrencyPos: " + startAt);
+        fromSpinner.setSelection(startAt);
 
         backBtn = (Button) findViewById(R.id.addExpenseBackBtn);
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +99,7 @@ public class ExchangeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent backIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
                 backIntent.putExtra("groupKey", groupKey);
+                backIntent.putExtra("baseCurrencyPos", basecurrencyPosition);
                 startActivity(backIntent);
             }
         });
@@ -153,6 +161,8 @@ public class ExchangeActivity extends AppCompatActivity {
 
                         String mainUrl = "http://data.fixer.io/api/latest?access_key=be99fccf6933a51407eb597a21f7dcb3&symbols=";
                         System.out.println(fromSpinner.getSelectedItem());
+
+
                         String updatedUrl = mainUrl; //+ fromSpinner.getSelectedItem().toString();
 
                         URL url = new URL(updatedUrl);

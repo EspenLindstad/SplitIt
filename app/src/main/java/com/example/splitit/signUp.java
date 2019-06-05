@@ -42,6 +42,8 @@ public class signUp extends AppCompatActivity {
     String lastName;
     String phoneNumber;
 
+    private Button backBtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,17 +60,12 @@ public class signUp extends AppCompatActivity {
 
 
         Button newUserBtn = (Button) findViewById(R.id.newUserBtn);
+        backBtn = (Button) findViewById(R.id.signupBackBtn);
         firstName = ((EditText) findViewById(R.id.userFirstName)).getText().toString();
         lastName = ((EditText) findViewById(R.id.userLastName)).getText().toString();
         phoneNumber = ((EditText) findViewById(R.id.userPhoneNumber)).getText().toString();
         final String email = ((EditText) findViewById(R.id.edit_email)).getText().toString();
         final String password = ((EditText) findViewById(R.id.edit_password)).getText().toString();
-
-        /*
-
-*/
-        //String uid = user.getUid();
-
 
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -84,6 +81,14 @@ public class signUp extends AppCompatActivity {
                 }
             }
         };
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent backIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(backIntent);
+            }
+        });
 
       newUserBtn.setOnClickListener(new View.OnClickListener() {
 
