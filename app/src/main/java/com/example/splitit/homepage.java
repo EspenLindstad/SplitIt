@@ -54,6 +54,10 @@ public class homepage extends AppCompatActivity {
     private ArrayList<String> testIds;
     ArrayAdapter arrayAdapter;
 
+    String firstName;
+    String lastName;
+    String phoneNumber;
+
     private Button addSettlement;
 
     private String uid;
@@ -97,8 +101,6 @@ public class homepage extends AppCompatActivity {
                     GroupListView.setAdapter(arrayAdapter);
                     GroupListView.setVisibility(View.VISIBLE);
 
-
-
                     GroupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -132,6 +134,12 @@ public class homepage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
+
+        Intent intent = getIntent();
+        firstName = intent.getStringExtra("firstName");
+        lastName = intent.getStringExtra("lastName");
+        phoneNumber = intent.getStringExtra("phoneNumber");
+
 
         user = Auth.getCurrentUser();
 

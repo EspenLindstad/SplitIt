@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,13 +29,12 @@ public class ViewExpense extends AppCompatActivity {
     private String expense;
     private String currentUser;
     private String uniqueKey;
-    private TextView ExpenseNameTV;
-    private TextView UserWhoPayedTV;
-    private TextView ExpenseTV;
     private Button deleteThisExpenseBtn;
     private Button backToViewExpenseBtn;
+    private String baseCurrency;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ArrayList<String> participants;
+    ArrayAdapter arrayAdapter;
 
 
     @Override
@@ -50,18 +50,26 @@ public class ViewExpense extends AppCompatActivity {
         currentUser = viewExpenseIntent.getExtras().getString("currentUser");
         participants =  viewExpenseIntent.getExtras().getStringArrayList("participants");
         uniqueKey = viewExpenseIntent.getExtras().getString("uniqueExpenseKey");
+        baseCurrency = viewExpenseIntent.getExtras().getString("baseCurrency");
 
-        System.out.println("VIEWEXPENSE");
-        System.out.println("expenseName" + expenseName);
-        System.out.println("userWhoPayed"+ userWhoPayed);
-        System.out.println("expense" + expense);
-        System.out.println("currentUser" + currentUser);
-        System.out.println("uniqueKey" + uniqueKey);
+        double expenseDouble = Double.parseDouble(expense);
+        expenseDouble = Math.round(expenseDouble*100)/100;
+        expense = Double.toString(expenseDouble);
 
-        /*
-        UserWhoPayedTV.setText(userWhoPayed);
-        ExpenseNameTV.setText(expenseName);
-        ExpenseTV.setText(expense);*/
+        TextView ExpenseNameTV = (TextView) findViewById(R.id.ExpenseNameTV);
+        TextView UserWhoPayedTV = (TextView) findViewById(R.id.UserWhoPayedTV);
+        TextView ExpenseTV = (TextView) findViewById(R.id.ExpenseTV);
+        ListView participantsLV = (ListView) findViewById(R.id.participantsLV);
+
+        arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, participants);
+        participantsLV.setAdapter(arrayAdapter);
+
+
+        UserWhoPayedTV.setText("User Who Payed: " + userWhoPayed);
+        ExpenseNameTV.setText("Expense Name: " + expenseName);
+        ExpenseTV.setText("Total: " + expense + " " + baseCurrency);
+
+
 
         deleteThisExpenseBtn = findViewById(R.id.deleteThisExpenseBtn);
         backToViewExpenseBtn = findViewById(R.id.backToViewExpenseBtn);

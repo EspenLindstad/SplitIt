@@ -46,6 +46,8 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
 
 
+
+
         if (user != null) {
             // Name, email address, and profile photo Url
             String name = user.getDisplayName();
