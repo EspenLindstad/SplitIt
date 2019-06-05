@@ -97,6 +97,7 @@ public class AddGroupMember extends AppCompatActivity {
         backButton = (Button) findViewById(R.id.backButton);
 
         nextButton.setEnabled(false);
+        nextButton.setVisibility(View.INVISIBLE);
 
         TextView topText = (TextView) findViewById(R.id.textView4);
 
@@ -168,9 +169,11 @@ public class AddGroupMember extends AppCompatActivity {
     private void changeClickability() {
         if (memberlist.size() > 1) {
             nextButton.setEnabled(true);
+            nextButton.setVisibility(View.VISIBLE);
         }
         else {
             nextButton.setEnabled(false);
+            nextButton.setVisibility(View.INVISIBLE);
         }
 
     }
