@@ -33,7 +33,7 @@ public class Expense {
     }
 
     public double getCostPerPerson(){
-        return expense/(expenseMembers.size()+1); //plus one to account for the person who payed
+        return expense/(expenseMembers.size()); //plus one to account for the person who payed
     }
 
     public double getNewCostIfPersonDeleted(){

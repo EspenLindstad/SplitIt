@@ -314,7 +314,7 @@ public class Group {
     }
 
     public double getCostPerPerson(double expense, ArrayList<String> members){
-        return expense/(members.size()+1); //plus one to account for the person who payed
+        return expense/(members.size()); //plus one to account for the person who payed
     }
 
     public String whoShouldPayNext(ArrayList<Double> settlementArr, Map<String, Integer> userMap){
