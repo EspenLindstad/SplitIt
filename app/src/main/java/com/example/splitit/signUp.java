@@ -50,10 +50,10 @@ public class signUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+
+        //intialize firebase functions
         FirebaseApp.initializeApp(this);
-
         db = FirebaseFirestore.getInstance();
-
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -86,19 +86,25 @@ public class signUp extends AppCompatActivity {
             }
         });
 
+        //create new user
       newUserBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
 
+
+                //get information to sign up with email and password
                 String email = ((EditText) findViewById(R.id.edit_email)).getText().toString();
                 String password = ((EditText) findViewById(R.id.edit_password)).getText().toString();
                 String password_auth = ((EditText) findViewById(R.id.edit_password_auth)).getText().toString();
 
+                //get information which was written in
                 firstName = ((EditText) findViewById(R.id.userFirstName)).getText().toString();
                 lastName = ((EditText) findViewById(R.id.userLastName)).getText().toString();
                 phoneNumber = ((EditText) findViewById(R.id.userPhoneNumber)).getText().toString();
 
+
+                //check if passwords are equal, if not give user a message
                 if (password.equals(password_auth)) {
 
                     mAuth.createUserWithEmailAndPassword(email, password)
@@ -112,8 +118,6 @@ public class signUp extends AppCompatActivity {
 //signedinusercanbehandledinthelistener.
                                     if (!task.isSuccessful()) {
                                         Toast.makeText(signUp.this, "AuthenticationFailed",
-                                                Toast.LENGTH_SHORT).show();
-                                        Toast.makeText(signUp.this, "Password needs to consist of Numbers and digits",
                                                 Toast.LENGTH_SHORT).show();
                                     } else {
                                         onAuthSuccess(task.getResult().getUser());

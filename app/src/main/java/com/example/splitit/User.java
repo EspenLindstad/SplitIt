@@ -62,6 +62,7 @@ class User {
         System.out.println("Ting funker ja");
     }
 
+
     public ArrayList<String> getUsersSettlements(String userkey) {
         DocumentReference docRef = db.collection("users").document(userkey);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

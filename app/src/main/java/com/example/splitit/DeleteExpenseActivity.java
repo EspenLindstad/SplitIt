@@ -23,16 +23,16 @@ import java.util.Map;
 public class DeleteExpenseActivity extends AppCompatActivity {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    String groupKey;
-    String baseCurrency;
+    private String groupKey;
+    private String baseCurrency;
     ArrayAdapter arrayAdapter;
     ListView expenseListView;
-    ArrayList<String> expenseNames = new ArrayList<>();
-    ArrayList<String> userWhoPayed = new ArrayList<>();
-    ArrayList<String> expenses = new ArrayList<>();
-    ArrayList<ArrayList<String>> participants = new ArrayList<>();
-    ArrayList<String> uniqueKeyArray = new ArrayList<>();
-    Button backBtn;
+    private ArrayList<String> expenseNames = new ArrayList<>();
+    private ArrayList<String> userWhoPayed = new ArrayList<>();
+    private ArrayList<String> expenses = new ArrayList<>();
+    private ArrayList<ArrayList<String>> participants = new ArrayList<>();
+    private ArrayList<String> uniqueKeyArray = new ArrayList<>();
+    private Button backBtn;
     private Map<String, String> expenseNameMap;
     private Map<String, Double> expenseMap;
     private Map<String, ArrayList<String>> participantsMap;
@@ -49,14 +49,16 @@ public class DeleteExpenseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_expense);
 
-        Intent intent = getIntent();
 
+        //get the groupkey
+        Intent intent = getIntent();
         groupKey = intent.getExtras().getString("groupKey");
 
+        //initialize listview and backbutton
         expenseListView = (ListView) findViewById(R.id.expensesListView);
-
         backBtn = (Button) findViewById(R.id.addExpenseBtn);
 
+        //get current user
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         String email = user.getEmail();
@@ -68,13 +70,14 @@ public class DeleteExpenseActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
+                //get the information from firebase
                 expenseNameMap = documentSnapshot.toObject(Group.class).getExpenseNameMap();
                 userWhoPayedMap = documentSnapshot.toObject(Group.class).getUserWhoPayedMap();
                 expenseMap = documentSnapshot.toObject(Group.class).getExpenseMap();
                 participantsMap = documentSnapshot.toObject(Group.class).getParticipantsMap();
                 baseCurrency = documentSnapshot.toObject(Group.class).getBaseCurrency();
 
-
+                //fetch out the relevant values to display them in the next intent
                 for (String value : expenseNameMap.values()) {
                     expenseNames.add(value);
                 }
@@ -96,15 +99,18 @@ public class DeleteExpenseActivity extends AppCompatActivity {
                 }
 
 
-
+                //Listview to show all the expensenames
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, expenseNames);
                 expenseListView.setAdapter(arrayAdapter);
 
+
+                //set the expenses on clicklistener -> if you click them you get information about the expense.
                 expenseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                         Intent viewExpenseIntent = new Intent(getApplicationContext(), ViewExpense.class);
+                        //pass the information
                         viewExpenseIntent.putExtra("groupKey", groupKey);
                         viewExpenseIntent.putExtra("expenseName", expenseNames.get(position));
                         viewExpenseIntent.putExtra("userWhoPayed", userWhoPayed.get(position));
@@ -114,8 +120,6 @@ public class DeleteExpenseActivity extends AppCompatActivity {
                         viewExpenseIntent.putExtra("baseCurrency", baseCurrency);
 
                         viewExpenseIntent.putStringArrayListExtra("participants", participants.get(position));
-
-
                         startActivity(viewExpenseIntent);
 
                     }
@@ -125,6 +129,7 @@ public class DeleteExpenseActivity extends AppCompatActivity {
             }
         });
 
+        //back to settlement homepage
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,8 +138,6 @@ public class DeleteExpenseActivity extends AppCompatActivity {
                 startActivity(newSetIntent);
             }
         });
-
-
     }
 
 

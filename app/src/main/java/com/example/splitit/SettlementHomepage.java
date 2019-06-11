@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -77,7 +78,6 @@ public class SettlementHomepage extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         ArrayList<String> groupkeys = (ArrayList<String>) documentSnapshot.get("groupKeys");
 
-
                         Intent addIntent = new Intent(getApplicationContext(), AddNewGroupMember.class);
                         addIntent.putStringArrayListExtra("groupMembers", groupMembers);
                         addIntent.putStringArrayListExtra("groupkeys", groupkeys);
@@ -123,7 +123,6 @@ public class SettlementHomepage extends AppCompatActivity {
                     }
                 }
 
-
                 String payNext = documentSnapshot.toObject(Group.class).whoShouldPayNext(settlementArr, userMap);
 
                 payNextPerson.setText(payNext);
@@ -151,6 +150,25 @@ public class SettlementHomepage extends AppCompatActivity {
             }
         });
 
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        ArrayList<String> members = documentSnapshot.toObject(Group.class).getGroupList();
+                        Intent viewMember = new Intent(getApplicationContext(), ViewMember.class);
+                        viewMember.putExtra("groupKey", groupKey);
+                        viewMember.putExtra("member", members.get(position));
+                        startActivity(viewMember);
+
+                    }
+                });
+            }
+        });
+
+
     }
 
     @Override
@@ -173,16 +191,6 @@ public class SettlementHomepage extends AppCompatActivity {
 
         goToSettlementBtn = (Button) findViewById(R.id.goToSettlementBtn);
 
-        delMemBtn = (Button) findViewById(R.id.delMemBtn);
-
-        delMemBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent delMembIntent = new Intent(getApplicationContext(), DeleteMember.class);
-                delMembIntent.putExtra("groupKey", groupKey);
-                startActivity(delMembIntent);
-            }
-        });
 
         homeBtn = (Button) findViewById(R.id.homeBtn);
         homeBtn.setOnClickListener(new View.OnClickListener() {
@@ -192,6 +200,7 @@ public class SettlementHomepage extends AppCompatActivity {
                 startActivity(homeIntent);
             }
         });
+
 
     }
 
