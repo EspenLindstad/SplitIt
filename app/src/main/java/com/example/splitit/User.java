@@ -63,6 +63,7 @@ class User {
         db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
     }
 
+
     public ArrayList<String> getUsersSettlements(String userkey) {
         DocumentReference docRef = db.collection("users").document(userkey);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

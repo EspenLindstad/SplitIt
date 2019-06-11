@@ -141,7 +141,6 @@ public class AddGroupMember extends AppCompatActivity {
                 // Creating an intent, from the MainActivity to AnotherActivity
                 Intent intent = new Intent(AddGroupMember.this, NameGroupPage.class);
 
-
                 intent.putStringArrayListExtra("grouplist", memberlist);
                 intent.putStringArrayListExtra("userKeys", userKeys);
 
@@ -178,7 +177,6 @@ public class AddGroupMember extends AppCompatActivity {
                             if (user != null) {
                                 // User is Login
                                 displayName = usernameFromEmail(user.getEmail());
-
                             }
 
                             String name = document.get("name").toString();

@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -34,13 +35,17 @@ public class SettlementHomepage extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private String groupKey;
+    private String basecurrencyPosition;
 
     private ArrayList<String> groupMembers;
+
+    private Group group;
 
     private Button addBtn;
     private Button goToSettlementBtn;
     private Button deleteBtn;
     private Button homeBtn;
+    private Button delMemBtn;
     private Button plusBtn;
 
     private TextView payNextPerson;
@@ -138,6 +143,25 @@ public class SettlementHomepage extends AppCompatActivity {
                 startActivity(newDIntent);
             }
         });
+
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        ArrayList<String> members = documentSnapshot.toObject(Group.class).getGroupList();
+                        Intent viewMember = new Intent(getApplicationContext(), ViewMember.class);
+                        viewMember.putExtra("groupKey", groupKey);
+                        viewMember.putExtra("member", members.get(position));
+                        startActivity(viewMember);
+
+                    }
+                });
+            }
+        });
+
 
     }
 

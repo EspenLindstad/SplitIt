@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
+//A class which provides some basic functions to deal with expenses
+
 public class Expense {
 
     public ArrayList<String> expenseMembers; //members of the Expense
@@ -20,28 +23,8 @@ public class Expense {
         this.expenseName = expenseName;
     }
 
-    public String getExpenseName(){
-        return expenseName;
-    }
-
-    public ArrayList<String> getExpenseMembers(){
-        return expenseMembers;
-    }
-
-    public String getMemberPayed(){
-        return memberPayed;
-    }
-
     public double getCostPerPerson(){
         return expense/(expenseMembers.size()); //plus one to account for the person who payed
-    }
-
-    public double getNewCostIfPersonDeleted(){
-        double diff = expense/expenseMembers.size() - getCostPerPerson();
-        return diff;
-    }
-    public void deletePerson(String user){
-        expenseMembers.remove(user);
     }
 
 }

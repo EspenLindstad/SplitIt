@@ -42,6 +42,7 @@ public class ViewExpense extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_expense);
 
+        //fetch information from intent
         Intent viewExpenseIntent = getIntent();
         groupKey = viewExpenseIntent.getExtras().getString("groupKey");
         expenseName = viewExpenseIntent.getExtras().getString("expenseName");
@@ -53,7 +54,7 @@ public class ViewExpense extends AppCompatActivity {
         baseCurrency = viewExpenseIntent.getExtras().getString("baseCurrency");
 
         double expenseDouble = Double.parseDouble(expense);
-        expenseDouble = Math.round(expenseDouble*100)/100;
+        expenseDouble = Math.round(expenseDouble*100)/100; //want to decimals
         expense = Double.toString(expenseDouble);
 
         TextView ExpenseNameTV = (TextView) findViewById(R.id.ExpenseNameTV);
@@ -61,6 +62,8 @@ public class ViewExpense extends AppCompatActivity {
         TextView ExpenseTV = (TextView) findViewById(R.id.ExpenseTV);
         ListView participantsLV = (ListView) findViewById(R.id.participantsLV);
 
+
+        //set array adapter
         arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, participants);
         participantsLV.setAdapter(arrayAdapter);
 
@@ -69,11 +72,11 @@ public class ViewExpense extends AppCompatActivity {
         ExpenseNameTV.setText("Expense Name: " + expenseName);
         ExpenseTV.setText("Total: " + expense + " " + baseCurrency);
 
-
-
         deleteThisExpenseBtn = findViewById(R.id.deleteThisExpenseBtn);
         backToViewExpenseBtn = findViewById(R.id.backToViewExpenseBtn);
 
+
+        //back to View expenses page
         backToViewExpenseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,38 +99,22 @@ public class ViewExpense extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(),"Expense deleted",
                                     Toast.LENGTH_SHORT).show();
 
+
+                            //get all information for firebase
                             Map<String, String> userWhoPayedMapTemp = documentSnapshot.toObject(Group.class).getUserWhoPayedMap();
                             Map<String, Double> expenseMapTemp = documentSnapshot.toObject(Group.class).getExpenseMap();
                             Map<String, ArrayList<String>> participantsMapTemp = documentSnapshot.toObject(Group.class).getParticipantsMap();
                             Map<String, String> expenseNameMapTemp = documentSnapshot.toObject(Group.class).getExpenseNameMap();
 
-                            System.out.println("MAPS BEFORE ELEMENT IS REMOVED");
-                            System.out.println("userWhoPayedMap");
-                            System.out.println(userWhoPayedMapTemp);
-                            System.out.println("expenseMap");
-                            System.out.println(expenseMapTemp);
-                            System.out.println("expenseNameMap");
-                            System.out.println(expenseNameMapTemp);
-                            System.out.println("participantsMap");
-                            System.out.println(participantsMapTemp);
 
+                            //remove the expense which was clicked on in the list
                             expenseMapTemp.remove(uniqueKey);
                             participantsMapTemp.remove(uniqueKey);
                             expenseNameMapTemp.remove(uniqueKey);
                             userWhoPayedMapTemp.remove(uniqueKey);
 
 
-                            System.out.println("MAPS AFTER ELEMENT IS REMOVED");
-                            System.out.println("userWhoPayedMap");
-                            System.out.println(userWhoPayedMapTemp);
-                            System.out.println("expenseMap");
-                            System.out.println(expenseMapTemp);
-                            System.out.println("expenseNameMap");
-                            System.out.println(expenseNameMapTemp);
-                            System.out.println("participantsMap");
-                            System.out.println(participantsMapTemp);
-
-
+                            //write back to firebase
                             Map<String, Object> expenseNameMap = new HashMap<String, Object>();
                             expenseNameMap.put("expenseNameMap", expenseNameMapTemp);
 
@@ -146,13 +133,14 @@ public class ViewExpense extends AppCompatActivity {
                             db.collection("groups").document(groupKey).update(userWhoPayedMap);
 
 
-
+                            //update settlement array
                             ArrayList<Double> settlementArr = documentSnapshot.toObject(Group.class).getSettlementArr();
                             settlementArr =documentSnapshot.toObject(Group.class).removeExpense(settlementArr, participants, userWhoPayed, Double.parseDouble(expense));
                             Map<String, Object> settlementMap = new HashMap<String, Object>();
                             settlementMap.put("settlementArr", settlementArr);
                             db.collection("groups").document(groupKey).set(settlementMap, SetOptions.merge());
 
+                            //start new intent
                             Intent backToDeleteExpenseActivity = new Intent(getApplicationContext(), DeleteExpenseActivity.class);
                             backToDeleteExpenseActivity.putExtra("groupKey", groupKey);
                             startActivity(backToDeleteExpenseActivity);
@@ -168,12 +156,6 @@ public class ViewExpense extends AppCompatActivity {
 
             }
         });
-
-
-
-
-
-
 
 
 
