@@ -30,6 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
+    /*
+    Uses the demoapp from the class for authentication and login through firebase.
+
+     */
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     public FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -135,10 +139,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void signUpPage(){
-        startActivity(new Intent(getApplicationContext(), signUp.class));
-        finish();
-    }
     public void showUserList(){
         startActivity(new Intent(getApplicationContext(), homepage.class));
         finish();

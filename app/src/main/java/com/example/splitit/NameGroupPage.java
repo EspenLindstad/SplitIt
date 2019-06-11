@@ -39,6 +39,11 @@ import java.util.List;
 import java.util.Map;
 
 public class NameGroupPage extends AppCompatActivity {
+    /*
+    The page where the the name of the group is added and the basecurrency.
+    The basecurrency chosen, will be the default for when adding an expense.
+    From here the groupKey is created, and passed on around the other pages.
+     */
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -49,7 +54,6 @@ public class NameGroupPage extends AppCompatActivity {
 
     private ArrayList<String> memberlist;
     private ArrayList<String> userKeys;
-    private ArrayList<String> memberKeys;
 
     private Button backButton;
     private Button doneButton;
@@ -59,9 +63,7 @@ public class NameGroupPage extends AppCompatActivity {
 
 
     private String uniqueKey;
-    private String groupKey;
     private String name;
-    private String userkey;
 
     private Map<String, Integer> userMap;
     Map<String, String> expenseNameMap = new HashMap<>();
@@ -74,7 +76,6 @@ public class NameGroupPage extends AppCompatActivity {
     ArrayAdapter arrayAdapter;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference groupsRef = database.getReference("groups");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +95,6 @@ public class NameGroupPage extends AppCompatActivity {
 
         final Spinner fromSpinner = (Spinner) findViewById(R.id.baseCurrencySpinner);
 
-
         Intent intent = getIntent();
 
         memberlist = intent.getStringArrayListExtra("grouplist");
@@ -113,7 +113,6 @@ public class NameGroupPage extends AppCompatActivity {
                     baseCurrency = fromSpinner.getSelectedItem().toString();
                     List<String> spinnerItems = Arrays.asList(getResources().getStringArray(R.array.spinnerItems));
                     String basecurrencyPosition = Integer.toString(spinnerItems.indexOf(baseCurrency));
-                    System.out.println("This is the basecurrencypos at start: " + basecurrencyPosition);
 
                     writeNewGroup(name, memberlist, userKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap, baseCurrency, basecurrencyPosition);
 
@@ -122,7 +121,6 @@ public class NameGroupPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent backIntent = new Intent(getApplicationContext(), AddGroupMember.class);
-                backIntent.putExtra("groupKey", groupKey);
                 startActivity(backIntent);
             }
         });
@@ -145,7 +143,6 @@ public class NameGroupPage extends AppCompatActivity {
 
     private void writeNewGroup(String gName, ArrayList<String> members, ArrayList<String> memberKeys, Map<String, Integer> userMap, Map<String, String> expenseNameMap, Map<String, Double> expenseMap, Map<String, ArrayList<String>> participantsMap, Map<String, String> userWhoPayedMap, String baseCurrency, String baseCurrencyPos) {
         //gName = ((TextView) findViewById(R.id.editText)).getText().toString();
-        System.out.println("This is the groupname: " + gName);
         Group group = new Group(gName, members, memberKeys, userMap, expenseNameMap, expenseMap, participantsMap, userWhoPayedMap, baseCurrency, baseCurrencyPos);
         db.collection("groups")
                 .add(group)
@@ -153,11 +150,6 @@ public class NameGroupPage extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         uniqueKey = documentReference.getId();
-                        System.out.println("Dette er nøkkelen i writenewgroup: " + uniqueKey);
-
-                        System.out.println("These are the memberkeys: " + memberKeys);
-                        System.out.println("These are the membernames: " + memberlist);
-
 
                         if (memberKeys.contains(null)) {
                             memberKeys.remove(null);
@@ -168,11 +160,8 @@ public class NameGroupPage extends AppCompatActivity {
                         }
 
                         Intent nextIntent = new Intent(getApplicationContext(), SettlementHomepage.class);
-
                         nextIntent.putExtra("groupKey", uniqueKey);
                         nextIntent.putExtra("baseCurrencyPos", baseCurrencyPos);
-
-
                         startActivity(nextIntent);
                         finish();
                     }
@@ -194,8 +183,6 @@ public class NameGroupPage extends AppCompatActivity {
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                //System.out.println("Class of usersting: " + documentSnapshot.get("usersSettlements").getClass());
-
 
                 if (documentSnapshot.get("usersSettlements") == null) {
                     Map<String, ArrayList<String>> settlementMap = new HashMap<>();
@@ -209,13 +196,10 @@ public class NameGroupPage extends AppCompatActivity {
                     //Funker ikke når brukeren er ny
                     Map<String, ArrayList<String>> settlementMap = new HashMap<>();
                     ArrayList<String> memberOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
-                    System.out.println("Test: " + memberOf.isEmpty());
                     memberOf.add(gname);
                     memberOf.add(groupKey);
                     settlementMap.put("usersSettlements", memberOf);
                     db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
-
-                    System.out.println("Ting funker ja");
                 }
 
 

@@ -76,7 +76,6 @@ public class AddNewGroupMember extends AppCompatActivity {
         groupKey = intent.getExtras().getString("groupKey");
         memberlist = intent.getExtras().getStringArrayList("groupMembers");
         memberKeys = intent.getExtras().getStringArrayList("groupkeys");
-        System.out.println("This is the memberlist from intent: " + memberlist);
 
 
         readData(new MyCallback() {
@@ -92,8 +91,6 @@ public class AddNewGroupMember extends AppCompatActivity {
                         userkeylist.remove(key);
                     }
                 }
-                System.out.println("This is the usernamelist after callback: " + usernamelist);
-                System.out.println("This is the userkeylist after callback: " + userkeylist);
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, usernamelist);
                 userlist.setAdapter(arrayAdapter);
 
@@ -104,8 +101,6 @@ public class AddNewGroupMember extends AppCompatActivity {
         userlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                System.out.println("Name of pressed item: " + usernamelist.get(position));
-                System.out.println("Key of pressed item: " + userkeylist.get(position));
                 if (!memberlist.contains(usernamelist.get(position))) {
                     view.setBackgroundColor(Color.LTGRAY);
                     view.invalidate();
@@ -113,7 +108,6 @@ public class AddNewGroupMember extends AppCompatActivity {
                     memberKeys.add(userkeylist.get(position));
                     newMembersList.add((usernamelist.get(position)));
                     newMembersKeys.add(userkeylist.get(position));
-                    System.out.println("Adding member to newmemberKeys: " + newMembersKeys);
 
                 }
                 else {
@@ -121,7 +115,6 @@ public class AddNewGroupMember extends AppCompatActivity {
                     memberKeys.remove(userkeylist.get(position));
                     newMembersList.remove(usernamelist.get(position));
                     newMembersKeys.remove(userkeylist.get(position));
-                    System.out.println("Removing member from newmemberkeys: " + newMembersKeys);
                     view.setBackgroundColor(0x00000000);
                     view.invalidate();
 
@@ -173,20 +166,12 @@ public class AddNewGroupMember extends AppCompatActivity {
                             String name = document.get("name").toString();
                             String uid = document.get("userID").toString();
 
-
-                            System.out.println("Name and uid: " + name + " " + uid);
-
                             if (!name.equals(displayName)) {
                                 usernamelist.add(name);
                                 userkeylist.add(uid);
                             }
-
-                            System.out.println("Usernamelist: " + usernamelist);
-
-
                         }
                     } else {
-                        Log.w("Bosj", "Error getting documents.", task.getException());
                     }
                     myCallback.onCallback(usernamelist, userkeylist);
                 });
@@ -204,7 +189,6 @@ public class AddNewGroupMember extends AppCompatActivity {
                 ArrayList<String> keys = group.getGroupKeys();
                 ArrayList<Double> settlementArr = group.getSettlementArr();
                 String groupName = group.getName();
-                System.out.println("This is the new memberkeys: " + newMembersKeys);
 
                 for (int i = 0; i < newMembersKeys.size(); i++) {
                     group.addGroupMember(newMembersList.get(i), newMembersKeys.get(i), settlementArr);
@@ -219,9 +203,6 @@ public class AddNewGroupMember extends AppCompatActivity {
                 db.collection("groups").document(groupKey).update("members", group.getMembers());
                 db.collection("groups").document(groupKey).update("userMap", group.getUserMap());
                 db.collection("groups").document(groupKey).update("settlementArr", group.getSettlementArr());
-
-                System.out.println("This is the grouplist after updateGroup: " + group.getGroupList());
-
             }
         });
     }
@@ -233,8 +214,6 @@ public class AddNewGroupMember extends AppCompatActivity {
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                //System.out.println("Class of usersting: " + documentSnapshot.get("usersSettlements").getClass());
-
 
                 if (documentSnapshot.get("usersSettlements") == null) {
                     Map<String, ArrayList<String>> settlementMap = new HashMap<>();
@@ -245,17 +224,12 @@ public class AddNewGroupMember extends AppCompatActivity {
                     db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
                 }
                 else {
-                    //Funker ikke når brukeren er ny
                     Map<String, ArrayList<String>> settlementMap = new HashMap<>();
                     ArrayList<String> memberOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
-                    System.out.println("Test: " + memberOf.isEmpty());
                     memberOf.add(gname);
                     memberOf.add(groupKey);
                     settlementMap.put("usersSettlements", memberOf);
-                    System.out.println("This is the settlementmap: " + settlementMap);
                     db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
-
-                    System.out.println("Ting funker ja");
                 }
 
 
@@ -274,7 +248,6 @@ public class AddNewGroupMember extends AppCompatActivity {
         }
 
     }
-
 
     private String usernameFromEmail(String email) {
         if (email.contains("@")) {

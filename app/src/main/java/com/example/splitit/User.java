@@ -14,6 +14,9 @@ import java.util.Map;
 
 
 class User {
+    /*
+    This class is basically used for adding new settlements to the userpage in firebase
+     */
     private String name;
     private String email;
     private String ID;
@@ -58,8 +61,6 @@ class User {
         memberOf.add(groupKey);
         settlementMap.put("usersSettlements", memberOf);
         db.collection("users").document(userKey).set(settlementMap, SetOptions.merge());
-
-        System.out.println("Ting funker ja");
     }
 
     public ArrayList<String> getUsersSettlements(String userkey) {
@@ -68,8 +69,6 @@ class User {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 ArrayList<String> partOf = new ArrayList<>();
-                System.out.println("Class of usersting: " + documentSnapshot.get("usersSettlements").getClass());
-
             }
         });
         return partOf;

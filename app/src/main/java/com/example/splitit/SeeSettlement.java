@@ -24,9 +24,13 @@ import java.util.Objects;
 
 public class SeeSettlement extends AppCompatActivity {
 
+    /*
+    This page creates an instance of the SplitAlgorithm and runs it with the settlementMatrix it retrieves from firebase.
+    The result is then showed in a userlist.
+     */
+
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private ArrayAdapter adapter;
     private CustomAdapter customAdapter;
     private ListView settlements;
 
@@ -64,64 +68,38 @@ public class SeeSettlement extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Group group = documentSnapshot.toObject(Group.class);
 
-                Map<String, Integer> temporaryMap;
-
                 baseCurrency = group.getBaseCurrency();
-
-                temporaryMap = group.getUserMap();
 
                 Long temp = (Long) documentSnapshot.get("members");
                 count = temp.intValue();
-                System.out.println("members count: " + count);
 
                 ArrayList<Double> array = (ArrayList<Double>) documentSnapshot.get("settlementArr");
-
-                System.out.println(array);
-
 
                     for (Double i : (ArrayList<Double>) documentSnapshot.get("settlementArr")) {
                         System.out.println("This is i: " + i);
                         settlementArray.add(i);
                     }
-                    System.out.println("Groupsmembers: " + settlementArray);
 
                     settlement = arrayToMat(settlementArray, count);
 
-
                     SplitAlgorithm splitter = new SplitAlgorithm();
 
-                    System.out.println(settlement.length);
-
                     splitter.minCashFlow(settlement, count);
-
-
 
                     debitUsers = splitter.getDebitors();
                     creditUsers = splitter.getCreditors();
                     sums = splitter.getSums();
 
-                    System.out.println(debitUsers);
-                    System.out.println(creditUsers);
-                    System.out.println(sums);
 
                     for (String s : debitUsers) {
                         testing.add(group.getGroupList().get(Integer.parseInt(s)));
-                        System.out.println("Testing: " + testing);
                     }
                     for (String s : creditUsers) {
                         testing1.add(group.getGroupList().get(Integer.parseInt(s)));
-                        System.out.println("Testing: " + testing1);
                     }
                     for (String s : sums) {
                         testing2 = splitter.getSums();
-                        System.out.println("Testing: " + testing2);
                     }
-
-
-
-
-                    System.out.println("Size of debitUsers");
-                    System.out.println(debitUsers.size());
 
                     if (debitUsers.size() == 0) {
                         noListTextView.setVisibility(View.VISIBLE);
@@ -144,8 +122,6 @@ public class SeeSettlement extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_see_settlement);
-
-
 
         settlements = findViewById(R.id.settlementsListView);
         backBtn = findViewById(R.id.arrowBackBtn);
@@ -183,7 +159,6 @@ public class SeeSettlement extends AppCompatActivity {
             view = getLayoutInflater().inflate(R.layout.customlayout, null);
 
             TextView creditUser = (TextView)view.findViewById(R.id.creditUserTextView);
-            //TextView arrow = (TextView)view.findViewById(R.id.textView10);
 
             creditUser.setText(testing1.get(i) + " owes " + testing.get(i) + " " + testing2.get(i) + " " + baseCurrency );
 
@@ -204,8 +179,6 @@ public class SeeSettlement extends AppCompatActivity {
         return settlement;
 
     }
-
-
 
 }
 

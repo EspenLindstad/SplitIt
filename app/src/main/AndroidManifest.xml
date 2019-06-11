@@ -22,7 +22,6 @@
         <activity android:name=".signUp" />
         <activity android:name=".SeeSettlement" />
         <activity android:name=".AddGroupMember" />
-        <activity android:name=".DatabaseActivity" />
         <activity android:name=".homepage" />
         <activity
             android:name=".LoginActivity"

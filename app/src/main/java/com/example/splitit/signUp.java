@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class signUp extends AppCompatActivity {
+    /*
+    This page signes up a user in the firebase authentication system and redirect them to the homepage.
+     */
 
     private DatabaseReference mDatabase;
     public FirebaseAuth mAuth;
@@ -182,19 +185,15 @@ public class signUp extends AppCompatActivity {
 
                         userMap.put("userID", key);
                         userMap.put("Uid", uid);
+                        userMap.put("firstName", firstName);
+                        userMap.put("lastName", lastName);
+                        userMap.put("phoneNumber", phoneNumber);
 
 
                         db.collection("users").document(key).set(userMap, SetOptions.merge());
 
                         Intent intent = new Intent(getApplicationContext(), homepage.class);
                         intent.putExtra("userKey", key);
-                        intent.putExtra("firstName", firstName);
-                        intent.putExtra("lastName", lastName);
-                        intent.putExtra("phoneNumber", phoneNumber);
-                        intent.putExtra("email", email);
-
-
-
                         startActivity(intent);
                         finish();
                     }
@@ -205,12 +204,6 @@ public class signUp extends AppCompatActivity {
                         Log.w(TAG, "Error adding document", e);
                     }
                 });
-
-
-
-
-
-
 
     }
 

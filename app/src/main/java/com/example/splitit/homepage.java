@@ -37,6 +37,11 @@ import java.util.Set;
 
 public class homepage extends AppCompatActivity {
 
+    /*
+    This is the homepage of the app.
+    Here we use fragments two change between two different pages, the dashboard and the profilepage
+     */
+
     private Button signOutBtn;
 
     private FirebaseAuth mAuth;
@@ -56,12 +61,7 @@ public class homepage extends AppCompatActivity {
 
     private Button addSettlement;
 
-    private String uid;
     private String userkey;
-    private String firstName;
-    private String lastName;
-    private String phoneNumber;
-    private String email;
 
     private TextView emailTextView;
     private TextView firstTextView;
@@ -116,26 +116,6 @@ public class homepage extends AppCompatActivity {
     public void onResume(){
         super.onResume();
 
-        Intent intent = getIntent();
-        firstName = intent.getStringExtra("firstName");
-        lastName = intent.getStringExtra("lastName");
-        phoneNumber = intent.getStringExtra("phoneNumber");
-        email = intent.getStringExtra("email");
-
-
-        System.out.println();
-
-        emailTextView.setText("Email: " + email);
-        firstTextView.setText("Firstname: " + firstName);
-        lastTextView.setText("Lastname: " + lastName);
-        phoneTextView.setText("Phonenumber: " + phoneNumber);
-
-        emailTextView.setVisibility(View.GONE);
-        firstTextView.setVisibility(View.GONE);
-        lastTextView.setVisibility(View.GONE);
-        phoneTextView.setVisibility(View.GONE);
-        signedInAs.setVisibility(View.GONE);
-
         readData(new PartOfInterface() {
             @Override
             public void onCallback(ArrayList<String> names, ArrayList<String> ids) {
@@ -189,6 +169,14 @@ public class homepage extends AppCompatActivity {
         phoneTextView = (TextView) findViewById(R.id.textView12);
         textView13 = (TextView) findViewById(R.id.textView13);
 
+        signedInAs.setVisibility(View.GONE);
+        emailTextView.setVisibility(View.GONE);
+        firstTextView.setVisibility(View.GONE);
+        lastTextView.setVisibility(View.GONE);
+        phoneTextView.setVisibility(View.GONE);
+        textView13.setVisibility(View.GONE);
+
+
 
         user = Auth.getCurrentUser();
 
@@ -230,32 +218,35 @@ public class homepage extends AppCompatActivity {
                 for (DocumentSnapshot document : querySnapshotTask.getResult().getDocuments()) {
                     userkey = document.getId();
 
-                    DocumentReference docRef = db.collection("users").document(userkey); //Denne må fikses
+                    DocumentReference docRef = db.collection("users").document(userkey);
                     docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            ArrayList<String> tull = (ArrayList<String>) documentSnapshot.get("usersSettlements");
-                            //partOf = (ArrayList<String>) documentSnapshot.get("usersSettlements");
-                            System.out.println("Part of: " + tull);
+                            ArrayList<String> usersSettlements = (ArrayList<String>) documentSnapshot.get("usersSettlements");
 
                             testNames = new ArrayList<>();
                             testIds = new ArrayList<>();
 
-                            if (tull != null) {
-                                //Funker ikke med ny bruker
-                                for (int a = 0; a<tull.size();a++) {
+                            if (usersSettlements != null) {
+                                for (int a = 0; a<usersSettlements.size();a++) {
                                     if (a % 2 == 0) {
-                                        testNames.add(tull.get(a));
+                                        testNames.add(usersSettlements.get(a));
                                     }
                                     else {
-                                        testIds.add(tull.get(a));
+                                        testIds.add(usersSettlements.get(a));
                                     }
                                 }
-
-                                System.out.println("names: " + testNames);
-                                System.out.println("ids: " + testIds);
                             }
 
+                            String firstName = (String) documentSnapshot.get("firstName");
+                            String lastName = (String) documentSnapshot.get("lastName");
+                            String email = (String) documentSnapshot.get("email");
+                            String phoneNumber = (String) documentSnapshot.get("phoneNumber");
+
+                            emailTextView.setText("Email: " + email);
+                            firstTextView.setText("Firstname: " + firstName);
+                            lastTextView.setText("Lastname: " + lastName);
+                            phoneTextView.setText("Phonenumber: " + phoneNumber);
 
                             partOfInterface.onCallback(testNames, testIds);
 

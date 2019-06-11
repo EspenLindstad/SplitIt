@@ -25,30 +25,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SettlementHomepage extends AppCompatActivity {
+    /*
+    This activity is the homepage for each group.
+    Here one can add expenses, delete expenses, see the settlement, add users to the group and
+    delete users from the group(By pressing at yourself in the listview)
+     */
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private String groupKey;
-    private String basecurrencyPosition;
 
     private ArrayList<String> groupMembers;
-
-    private Group group;
 
     private Button addBtn;
     private Button goToSettlementBtn;
     private Button deleteBtn;
     private Button homeBtn;
+    private Button plusBtn;
+
     private TextView payNextPerson;
     private TextView toptext;
-    private Button plusBtn;
-    Map<String, Integer> userMap = new HashMap<>();
-    String firstName;
-    String lastName;
-    String phoneNumber;
 
-    ArrayAdapter arrayAdapter;
+    private Map<String, Integer> userMap = new HashMap<>();
 
+    private ArrayAdapter arrayAdapter;
 
     public ListView userListView;
 
@@ -63,8 +63,6 @@ public class SettlementHomepage extends AppCompatActivity {
 
         groupMembers = intent.getStringArrayListExtra("groupmembers");
 
-        System.out.println("this is the groupKey: " + groupKey);
-
         userListView = (ListView) findViewById(R.id.groupmembersListView);
 
         plusBtn.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +73,6 @@ public class SettlementHomepage extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         ArrayList<String> groupkeys = (ArrayList<String>) documentSnapshot.get("groupKeys");
-
 
                         Intent addIntent = new Intent(getApplicationContext(), AddNewGroupMember.class);
                         addIntent.putStringArrayListExtra("groupMembers", groupMembers);
@@ -92,9 +89,7 @@ public class SettlementHomepage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent settlementIntent = new Intent(getApplicationContext(), SeeSettlement.class);
-
                 settlementIntent.putExtra("groupKey", groupKey);
-
                 startActivity(settlementIntent);
             }
         });
@@ -108,7 +103,6 @@ public class SettlementHomepage extends AppCompatActivity {
                 }
                 toptext = (TextView) findViewById(R.id.textView22);
                 toptext.setText(documentSnapshot.toObject(Group.class).getName());
-                System.out.println("These are my mfuckin gmember: " + groupMembers);
                 arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, groupMembers);
                 userListView.setAdapter(arrayAdapter);
 
@@ -121,10 +115,7 @@ public class SettlementHomepage extends AppCompatActivity {
                         settlementArr.add(0.0);
                     }
                 }
-
-
                 String payNext = documentSnapshot.toObject(Group.class).whoShouldPayNext(settlementArr, userMap);
-
                 payNextPerson.setText(payNext);
 
             }
@@ -133,7 +124,6 @@ public class SettlementHomepage extends AppCompatActivity {
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent newIntent = new Intent(getApplicationContext(), ExchangeActivity.class);
                 newIntent.putExtra("groupKey", groupKey);
                 startActivity(newIntent);
@@ -143,7 +133,6 @@ public class SettlementHomepage extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent newDIntent = new Intent(getApplicationContext(), DeleteExpenseActivity.class);
                 newDIntent.putExtra("groupKey", groupKey);
                 startActivity(newDIntent);
@@ -156,14 +145,6 @@ public class SettlementHomepage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settlement_homepage);
-
-
-        Intent intent = getIntent();
-        firstName = intent.getStringExtra("firstName");
-        lastName = intent.getStringExtra("lastName");
-        phoneNumber = intent.getStringExtra("phoneNumber");
-
-
 
         addBtn = (Button) findViewById(R.id.addBtn);
         deleteBtn = (Button) findViewById(R.id.deleteBtn);
@@ -180,9 +161,7 @@ public class SettlementHomepage extends AppCompatActivity {
                 startActivity(homeIntent);
             }
         });
-
     }
-
 
     public void readGroup(GroupCallback groupCallback) {
         final Task<QuerySnapshot> querySnapshotTask = db.collection("groups")

@@ -38,21 +38,23 @@ import java.util.ArrayList;
 
 public class AddGroupMember extends AppCompatActivity {
 
+    /*
+    This page is the first page of creating a new group.
+    Here is a listview of all members in the system, where each member is cliclable and hence selected for the group.
+    We have not implemented the search function, as we only worked with small groups and few members, but as the project
+    would have grown, the search function would hence be needed.
+     */
+
 
     private Button nextButton;
     private Button backButton;
 
     private TextView topText;
 
-    public FirebaseAuth mAuth;
-
-
     private static final String TAG = "UuerList";
     private String displayName;
     private String userkey;
 
-    private DatabaseReference userlistReference;
-    private ValueEventListener mUserListListener;
     public ArrayList<String> usernamelist = new ArrayList<>();
     private ArrayList<String> userkeylist = new ArrayList<>();
     private ArrayList<String> userKeys = new ArrayList<>();
@@ -62,10 +64,7 @@ public class AddGroupMember extends AppCompatActivity {
 
     public ListView userListView;
 
-    public TextView titleTextView;
-
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference userRef = db.collection("users");
     private FirebaseUser user;
     public FirebaseAuth Auth = FirebaseAuth.getInstance();
 
@@ -80,17 +79,10 @@ public class AddGroupMember extends AppCompatActivity {
         Intent intent = getIntent();
 
         userkey = intent.getExtras().getString("userkey");
-        System.out.println("this is the userkey" + userkey);
-        System.out.println(memberlist);
 
         memberlist.add(usernameFromEmail(user.getEmail()));
-        System.out.println(memberlist);
         userKeys.add(userkey);
 
-
-
-        userlistReference = FirebaseDatabase.getInstance().getReference().child("users");
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users");
         userListView = (ListView) findViewById(R.id.userlistview);
 
         nextButton = (Button) findViewById(R.id.nextButton);
@@ -99,7 +91,7 @@ public class AddGroupMember extends AppCompatActivity {
         nextButton.setEnabled(false);
         nextButton.setVisibility(View.INVISIBLE);
 
-        TextView topText = (TextView) findViewById(R.id.textView4);
+        topText = (TextView) findViewById(R.id.textView4);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,10 +131,6 @@ public class AddGroupMember extends AppCompatActivity {
 
                 }
                 changeClickability();
-
-                System.out.println(memberlist);
-
-
             }
         });
 
@@ -180,8 +168,7 @@ public class AddGroupMember extends AppCompatActivity {
 
 
     public void readData(MyCallback myCallback) {
-
-
+        
         final Task<QuerySnapshot> querySnapshotTask = db.collection("users")
                 .get()
                 .addOnCompleteListener(task -> {
