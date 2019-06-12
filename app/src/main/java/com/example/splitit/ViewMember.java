@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class ViewMember extends AppCompatActivity {
@@ -63,6 +64,8 @@ public class ViewMember extends AppCompatActivity {
     private Button backToSettlementHomepage;
 
     private int numMembers;
+    private int groupKeyIndex;
+    private int groupNameIndex;
 
 
     @Override
@@ -95,6 +98,12 @@ public class ViewMember extends AppCompatActivity {
         //Buttons
         delMemberBtn = (Button) findViewById(R.id.deleteMemBtn);
         backToSettlementHomepage = (Button) findViewById(R.id.backToSettlementHomepage);
+        if (currentUser.equals(member)) {
+            delMemberBtn.setText("Leave Group");
+        }
+        else {
+            delMemberBtn.setText("Delete Member");
+        }
 
         //fetch out data from firebase
         DocumentReference docRef = db.collection("groups").document(groupKey);
@@ -114,18 +123,6 @@ public class ViewMember extends AppCompatActivity {
                 userKeys = documentSnapshot.toObject(Group.class).getGroupKeys();
 
 
-                System.out.println("Member clicked on");
-                System.out.println(member);
-                System.out.println("userWhoPayedMap");
-                System.out.println(userWhoPayedMap);
-                System.out.println("expenseMap");
-                System.out.println(expenseMap);
-                System.out.println("expenseNameMap");
-                System.out.println(expenseNameMap);
-                System.out.println("participantsMap");
-                System.out.println(participantsMap);
-
-
                 //Want to give the user an overview of the expenses this member is a part of, and which expenses they payed for.
                 ArrayList<String> userPartOf= new ArrayList<>(); //All the expenses the member was a part of
                 ArrayList<String> userPayedFor = new ArrayList<>(); //All the expenses the member payed for
@@ -134,7 +131,6 @@ public class ViewMember extends AppCompatActivity {
                 //Find out which expenses the user payed for
                 for (Map.Entry<String, String> entry : userWhoPayedMap.entrySet()) {
                     if (entry.getValue().equals(member)){
-                        System.out.println("HALO");
                         userPayedFor.add(expenseNameMap.get(entry.getKey()));
                     }
                 }
@@ -142,21 +138,19 @@ public class ViewMember extends AppCompatActivity {
                 //find out which expenses the user is a part of
                 for (Map.Entry<String, ArrayList<String>> entry : participantsMap.entrySet()) {
                     for(String participants : entry.getValue()){
-                        if (participants.equals(member) && userWhoPayedMap.get(entry.getKey())!=member){ //dont want duplicate lists
+                        if (participants.equals(member)){
                             userPartOf.add(expenseNameMap.get(entry.getKey()));
                         }
                     }
                 }
-
-                System.out.println("userPayedFor" + userPayedFor);
-                System.out.println("userPartOf" + userPartOf);
-
 
                 //Display the listviews
                 arrayAdapter1 = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, userPartOf);
                 partOfListView.setAdapter(arrayAdapter1);
                 arrayAdapter2 = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, userPayedFor);
                 payedForListView.setAdapter(arrayAdapter2);
+
+
 
 
                 //Deleting the member
@@ -197,14 +191,22 @@ public class ViewMember extends AppCompatActivity {
                             }
                         }
 
-                        //Then we remove the user from the usermap
-                        String thisUserKey = userKeys.get(userMap.get(member));
-                        System.out.println("USERKEY FOR PERSON TO BE DELETED" + thisUserKey);
-                        userKeys.remove((userMap.get(member)));
+                        //Then we remove the user from the usermap and userkeys
+                        int personIndexInUserKeq = userMap.get(member);
+                        String thisUserKey = userKeys.get(personIndexInUserKeq);
+                        userKeys.remove(thisUserKey);
                         userMap.remove(member);
 
 
                         //Updating the settlement matrix
+
+                        //if the settlementarray is empty: initialize as zeros
+                        if(settlementArr.isEmpty()){
+                            for(int i = 0; i < groupList.size()*groupList.size(); i++){
+                                settlementArr.add(0.0);
+                            }
+                        }
+
                         double[][] settlement = documentSnapshot.toObject(Group.class).arrayToMatrix(settlementArr, groupList);
                         settlement = new double[settlement.length - 1][settlement.length - 1];
 
@@ -225,7 +227,6 @@ public class ViewMember extends AppCompatActivity {
                         //then converting it into an array
                         settlementArr = documentSnapshot.toObject(Group.class).matToArray(settlement);
 
-
                         //remove user form groupList
 
                         groupList.remove(member);
@@ -241,10 +242,8 @@ public class ViewMember extends AppCompatActivity {
                         db.collection("groups").document(groupKey).update("expenseMap", expenseMap);
                         db.collection("groups").document(groupKey).update("expenseNameMap", expenseNameMap);
                         db.collection("groups").document(groupKey).update("participantsMap", participantsMap);
+                        db.collection("groups").document(groupKey).update("groupKeys", userKeys);
 
-
-
-                        System.out.println("thisUserKey" + thisUserKey);
 
 
                         DocumentReference docRef = db.collection("users").document(thisUserKey);
@@ -254,22 +253,28 @@ public class ViewMember extends AppCompatActivity {
 
                                 userSettlements = (ArrayList<String>) documentSnapshot.get("usersSettlements");
 
-                                System.out.println("USER SETTLEMENTS");
-                                System.out.println(userSettlements);
 
-                                for(int i = 0; i < userSettlements.size(); i++){
-                                    if(userSettlements.get(i) == thisUserKey){
-                                        userSettlements.remove(i-1);
-                                        userSettlements.remove(i);
+                                for(int i = userSettlements.size()-1; i >= 0 ; i--){
+
+                                    if(userSettlements.get(i).equals(groupKey)){
+                                        groupKeyIndex = i;
+                                        groupNameIndex = i-1;
                                     }
                                 }
+
+
+                                userSettlements.subList(groupNameIndex, groupKeyIndex+1).clear();
+
+                                System.out.println("USER SETTLEMENTS AFTER DELETING");
+                                System.out.println(userSettlements);
+
                                 db.collection("users").document(thisUserKey).update("usersSettlements", userSettlements);
 
                             }
                         });
 
 
-                        if (currentUser == member) {
+                        if (currentUser.equals(member)) {
                             Intent backToHomeIntent = new Intent(getApplicationContext(), homepage.class);
                             startActivity(backToHomeIntent);
                         }
